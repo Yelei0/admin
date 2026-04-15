@@ -9,16 +9,22 @@ const { Content, Sider } = Layout
 // 菜单项配置
 const menuItems = [
   {
-    key: 'orders',
-    label: <Link to="/orders">订单管理</Link>,
-  },
-  {
-    key: 'users',
-    label: <Link to="/users">用户管理</Link>,
-  },
-  {
-    key: 'products',
-    label: <Link to="/products">产品管理</Link>,
+    key: 'test',
+    label: '测试页面',
+    children: [
+      {
+        key: 'orders',
+        label: <Link to="/orders">订单管理</Link>,
+      },
+      {
+        key: 'users',
+        label: <Link to="/users">用户管理</Link>,
+      },
+      {
+        key: 'products',
+        label: <Link to="/products">产品管理</Link>,
+      },
+    ],
   },
 ]
 
