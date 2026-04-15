@@ -47,6 +47,7 @@ export interface TableConfig {
 export interface ActionsConfig {
   row: string[];
   batch: string[];
+  global: string[];
 }
 
 // 分页配置类型

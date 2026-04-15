@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Table, Form, Input, Select, DatePicker, Button, Space, message, Spin, Empty } from 'antd';
-import { DeleteOutlined, ExportOutlined } from '@ant-design/icons';
+import { DeleteOutlined, ExportOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ListConfig, GenericListPageProps } from '../types/list-config';
 import { mapColumn } from '../utils/columnMapper';
+import { ShipperCreateModal, ShipperEditModal, ShipperDetailModal, ShipperDocumentsModal } from './ShipperModals';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -20,6 +21,13 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
     pageSize: 10,
   });
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  // 弹窗状态
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [documentsModalVisible, setDocumentsModalVisible] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState<any>(null);
 
   // 加载配置文件
   useEffect(() => {
@@ -40,6 +48,9 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
             break;
           case '/product.config.json':
             configModule = await import('../mock/product.config.json');
+            break;
+          case '/shipper-list.config.json':
+            configModule = await import('../mock/shipper-list.config.json');
             break;
           default:
             throw new Error(`未知的配置路径: ${configPath}`);
@@ -114,18 +125,54 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
 
   // 处理操作
   const handleAction = (action: string, record: any) => {
+    setCurrentRecord(record);
     switch (action) {
       case 'delete':
         handleDelete(record);
         break;
       case 'detail':
-        message.info(`查看 ${record.id}`);
+        setDetailModalVisible(true);
         break;
       case 'edit':
-        message.info(`编辑 ${record.id}`);
+        setEditModalVisible(true);
+        break;
+      case 'toggleStatus':
+        handleToggleStatus(record);
+        break;
+      case 'documents':
+        setDocumentsModalVisible(true);
         break;
       default:
         message.info(`执行 ${action} 操作`);
+    }
+  };
+
+  // 处理账号状态切换
+  const handleToggleStatus = (record: any) => {
+    const isEnabled = record.accountStatus === 'enabled';
+    const actionText = isEnabled ? '禁用' : '启用';
+    const confirmText = isEnabled 
+      ? '确定要禁用该企业账号吗？禁用后将无法登录和提报计划。' 
+      : '确定要启用该企业账号吗？';
+    
+    // 模拟权限检查（仅管理员可见）
+    const isAdmin = true; // 假设当前用户是管理员
+    
+    if (!isAdmin) {
+      message.error('您没有权限执行此操作');
+      return;
+    }
+    
+    // 这里应该显示确认弹窗
+    if (window.confirm(confirmText)) {
+      setData(prevData => 
+        prevData.map(item => 
+          item.id === record.id 
+            ? { ...item, accountStatus: isEnabled ? 'disabled' : 'enabled' }
+            : item
+        )
+      );
+      message.success(`${actionText}成功`);
     }
   };
 
@@ -221,8 +268,20 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
 
   // 渲染全局操作栏
   const renderActionBar = () => {
-    if (!config || !config.actions || config.actions.batch.length === 0) {
+    if (!config || !config.actions) {
       return null;
+    }
+
+    const hasBatchActions = config.actions.batch && config.actions.batch.length > 0;
+    const hasGlobalActions = config.actions.global && config.actions.global.length > 0;
+
+    if (!hasBatchActions && !hasGlobalActions) {
+      return (
+        <div style={{ marginBottom: 16 }}>
+          <h1 style={{ margin: 0 }}>{config.pageMeta.title}</h1>
+          <p style={{ margin: '4px 0 0 0', color: '#666' }}>{config.pageMeta.description}</p>
+        </div>
+      );
     }
 
     return (
@@ -232,7 +291,16 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
           <p style={{ margin: '4px 0 0 0', color: '#666' }}>{config.pageMeta.description}</p>
         </div>
         <Space>
-          {config.actions.batch.includes('batchDelete') && (
+          {hasGlobalActions && config.actions.global.includes('create') && (
+            <Button 
+              type="primary"
+              icon={<PlusOutlined />} 
+              onClick={() => setCreateModalVisible(true)}
+            >
+              新增托运企业
+            </Button>
+          )}
+          {hasBatchActions && config.actions.batch.includes('batchDelete') && (
             <Button 
               danger 
               icon={<DeleteOutlined />} 
@@ -242,7 +310,7 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
               批量删除
             </Button>
           )}
-          {config.actions.batch.includes('export') && (
+          {hasBatchActions && config.actions.batch.includes('export') && (
             <Button icon={<ExportOutlined />} onClick={handleExport}>
               导出
             </Button>
@@ -305,28 +373,70 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
   }
 
   return (
-    <Card>
-      {renderActionBar()}
-      {renderSearchForm()}
-      <Table
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={paginatedData}
-        rowKey={config.tableConfig.rowKey}
-        loading={loading}
-        pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          onChange: handlePaginationChange,
-          total: filteredData.length,
-          showSizeChanger: config.pagination.showSizeChanger,
-          showTotal: config.pagination.showTotal ? (total: number) => `共 ${total} 条记录` : undefined,
-        }}
-        locale={{
-          emptyText: <Empty description="暂无数据" />,
-        }}
-      />
-    </Card>
+    <>
+      <Card>
+        {renderActionBar()}
+        {renderSearchForm()}
+        <Table
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={paginatedData}
+          rowKey={config.tableConfig.rowKey}
+          loading={loading}
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            onChange: handlePaginationChange,
+            total: filteredData.length,
+            showSizeChanger: config.pagination.showSizeChanger,
+            showTotal: config.pagination.showTotal ? (total: number) => `共 ${total} 条记录` : undefined,
+          }}
+          locale={{
+            emptyText: <Empty description="暂无数据" />,
+          }}
+        />
+      </Card>
+
+      {/* 创建托运企业弹窗 */}
+      {configPath === '/shipper-list.config.json' && (
+        <>
+          <ShipperCreateModal
+            visible={createModalVisible}
+            onCancel={() => setCreateModalVisible(false)}
+            onSuccess={() => {
+              setCreateModalVisible(false);
+              message.success('创建成功，列表已刷新');
+            }}
+          />
+
+          <ShipperEditModal
+            visible={editModalVisible}
+            record={currentRecord}
+            onCancel={() => setEditModalVisible(false)}
+            onSuccess={() => {
+              setEditModalVisible(false);
+              message.success('编辑成功，列表已刷新');
+            }}
+          />
+
+          <ShipperDetailModal
+            visible={detailModalVisible}
+            record={currentRecord}
+            onCancel={() => setDetailModalVisible(false)}
+            onEdit={() => {
+              setDetailModalVisible(false);
+              setEditModalVisible(true);
+            }}
+          />
+
+          <ShipperDocumentsModal
+            visible={documentsModalVisible}
+            record={currentRecord}
+            onCancel={() => setDocumentsModalVisible(false)}
+          />
+        </>
+      )}
+    </>
   );
 };
 

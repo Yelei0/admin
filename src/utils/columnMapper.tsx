@@ -48,10 +48,11 @@ const renderActions = (record: any, rowActions: string[], onAction: (action: str
       {rowActions.map(action => {
         let buttonText = '';
         let buttonType: 'primary' | 'default' | 'dashed' | 'text' | 'link' = 'default';
+        let danger = false;
         
         switch (action) {
           case 'detail':
-            buttonText = '查看';
+            buttonText = '查看详情';
             buttonType = 'text';
             break;
           case 'edit':
@@ -60,6 +61,16 @@ const renderActions = (record: any, rowActions: string[], onAction: (action: str
             break;
           case 'delete':
             buttonText = '删除';
+            buttonType = 'text';
+            danger = true;
+            break;
+          case 'toggleStatus':
+            buttonText = record.accountStatus === 'enabled' ? '禁用' : '启用';
+            buttonType = 'text';
+            danger = record.accountStatus === 'enabled';
+            break;
+          case 'documents':
+            buttonText = '资料管理';
             buttonType = 'text';
             break;
           default:
@@ -70,6 +81,7 @@ const renderActions = (record: any, rowActions: string[], onAction: (action: str
           <Button 
             key={action} 
             type={buttonType} 
+            danger={danger}
             onClick={() => onAction(action, record)}
           >
             {buttonText}
