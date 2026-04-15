@@ -1,0 +1,197 @@
+{
+  "pageMeta": {
+    "title": "订单管理",
+    "description": "管理所有订单信息，包括订单状态、金额、创建时间等"
+  },
+  "searchConfig": [
+    {
+      "key": "orderId",
+      "label": "运单管理",
+      "type": "input",
+      "placeholder": "请输入运单编号"
+    },
+    {
+      "key": "customerName",
+      "label": "客户名称",
+      "type": "input",
+      "placeholder": "请输入客户名称"
+    },
+    {
+      "key": "status",
+      "label": "订单状态",
+      "type": "select",
+      "placeholder": "请选择订单状态",
+      "options": [
+        { "label": "待支付", "value": "pending" },
+        { "label": "已支付", "value": "paid" },
+        { "label": "已发货", "value": "shipped" },
+        { "label": "已完成", "value": "completed" },
+        { "label": "已取消", "value": "cancelled" }
+      ]
+    },
+    {
+      "key": "createTime",
+      "label": "创建时间",
+      "type": "dateRange",
+      "placeholder": "开始时间,结束时间"
+    }
+  ],
+  "tableConfig": {
+    "rowKey": "id",
+    "columns": [
+      {
+        "key": "id",
+        "title": "订单编号",
+        "type": "text",
+        "width": 120,
+        "fixed": "left"
+      },
+      {
+        "key": "customerName",
+        "title": "客户名称",
+        "type": "text",
+        "width": 150
+      },
+      {
+        "key": "customerPhone",
+        "title": "客户电话",
+        "type": "text",
+        "width": 150
+      },
+      {
+        "key": "amount",
+        "title": "订单金额",
+        "type": "currency",
+        "width": 120,
+        "align": "right"
+      },
+      {
+        "key": "status",
+        "title": "订单状态",
+        "type": "tag",
+        "width": 100,
+        "align": "center",
+        "dictKey": "statusDict"
+      },
+      {
+        "key": "paymentMethod",
+        "title": "支付方式",
+        "type": "tag",
+        "width": 100,
+        "align": "center",
+        "dictKey": "paymentMethodDict"
+      },
+      {
+        "key": "createTime",
+        "title": "创建时间",
+        "type": "datetime",
+        "width": 180
+      },
+      {
+        "key": "actions",
+        "title": "操作",
+        "type": "actions",
+        "width": 150,
+        "fixed": "right",
+        "align": "center"
+      }
+    ],
+    "dicts": {
+      "statusDict": {
+        "pending": { "label": "待支付", "color": "orange", "variant": "filled" },
+        "paid": { "label": "已支付", "color": "green", "variant": "filled" },
+        "shipped": { "label": "已发货", "color": "blue", "variant": "filled" },
+        "completed": { "label": "已完成", "color": "purple", "variant": "filled" },
+        "cancelled": { "label": "已取消", "color": "red", "variant": "filled" }
+      },
+      "paymentMethodDict": {
+        "alipay": { "label": "支付宝", "color": "blue", "variant": "filled" },
+        "wechat": { "label": "微信", "color": "green", "variant": "filled" },
+        "card": { "label": "银行卡", "color": "purple", "variant": "filled" }
+      }
+    }
+  },
+  "mockData": [
+    {
+      "id": "ORD20240101001",
+      "customerName": "张三",
+      "customerPhone": "13800138001",
+      "amount": 1299.99,
+      "status": "completed",
+      "paymentMethod": "alipay",
+      "createTime": "2024-01-01T10:00:00"
+    },
+    {
+      "id": "ORD20240101002",
+      "customerName": "李四",
+      "customerPhone": "13800138002",
+      "amount": 899.50,
+      "status": "shipped",
+      "paymentMethod": "wechat",
+      "createTime": "2024-01-01T11:30:00"
+    },
+    {
+      "id": "ORD20240101003",
+      "customerName": "王五",
+      "customerPhone": "13800138003",
+      "amount": 2499.00,
+      "status": "paid",
+      "paymentMethod": "card",
+      "createTime": "2024-01-01T14:20:00"
+    },
+    {
+      "id": "ORD20240102001",
+      "customerName": "赵六",
+      "customerPhone": "13800138004",
+      "amount": 599.99,
+      "status": "pending",
+      "paymentMethod": "alipay",
+      "createTime": "2024-01-02T09:15:00"
+    },
+    {
+      "id": "ORD20240102002",
+      "customerName": "钱七",
+      "customerPhone": "13800138005",
+      "amount": 1899.99,
+      "status": "completed",
+      "paymentMethod": "wechat",
+      "createTime": "2024-01-02T10:45:00"
+    },
+    {
+      "id": "ORD20240102003",
+      "customerName": "孙八",
+      "customerPhone": "13800138006",
+      "amount": 999.00,
+      "status": "cancelled",
+      "paymentMethod": "card",
+      "createTime": "2024-01-02T16:30:00"
+    },
+    {
+      "id": "ORD20240103001",
+      "customerName": "周九",
+      "customerPhone": "13800138007",
+      "amount": 3499.99,
+      "status": "paid",
+      "paymentMethod": "alipay",
+      "createTime": "2024-01-03T11:20:00"
+    },
+    {
+      "id": "ORD20240103002",
+      "customerName": "吴十",
+      "customerPhone": "13800138008",
+      "amount": 799.50,
+      "status": "shipped",
+      "paymentMethod": "wechat",
+      "createTime": "2024-01-03T14:40:00"
+    }
+  ],
+  "actions": {
+    "row": ["detail", "edit", "delete"],
+    "batch": ["batchDelete", "export"]
+  },
+  "pagination": {
+    "defaultPageSize": 10,
+    "showSizeChanger": true,
+    "showTotal": true
+  }
+}
