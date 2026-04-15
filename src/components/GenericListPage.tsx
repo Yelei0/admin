@@ -4,6 +4,8 @@ import { DeleteOutlined, ExportOutlined, PlusOutlined } from '@ant-design/icons'
 import type { ListConfig, GenericListPageProps } from '../types/list-config';
 import { mapColumn } from '../utils/columnMapper';
 import { ShipperCreateModal, ShipperEditModal, ShipperDetailModal, ShipperDocumentsModal } from './ShipperModals';
+import { BatchPlanCreateModal, BatchPlanEditModal, BatchPlanDetailModal, BatchPlanCancelModal } from './BatchPlanModals';
+import { ExpertCreateModal, ExpertEditModal, ExpertDeleteModal } from './ExpertModals';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -27,6 +29,8 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [documentsModalVisible, setDocumentsModalVisible] = useState(false);
+  const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<any>(null);
 
   // 加载配置文件
@@ -51,6 +55,12 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
             break;
           case '/shipper-list.config.json':
             configModule = await import('../mock/shipper-list.config.json');
+            break;
+          case '/batch-plan.config.json':
+            configModule = await import('../mock/batch-plan.config.json');
+            break;
+          case '/expert.config.json':
+            configModule = await import('../mock/expert.config.json');
             break;
           default:
             throw new Error(`未知的配置路径: ${configPath}`);
@@ -141,6 +151,9 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
         break;
       case 'documents':
         setDocumentsModalVisible(true);
+        break;
+      case 'cancel':
+        setCancelModalVisible(true);
         break;
       default:
         message.info(`执行 ${action} 操作`);
@@ -433,6 +446,84 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
             visible={documentsModalVisible}
             record={currentRecord}
             onCancel={() => setDocumentsModalVisible(false)}
+          />
+        </>
+      )}
+
+      {/* 批次计划管理弹窗 */}
+      {configPath === '/batch-plan.config.json' && (
+        <>
+          <BatchPlanCreateModal
+            visible={createModalVisible}
+            onCancel={() => setCreateModalVisible(false)}
+            onSuccess={() => {
+              setCreateModalVisible(false);
+              message.success('批次计划创建成功');
+            }}
+          />
+
+          <BatchPlanEditModal
+            visible={editModalVisible}
+            record={currentRecord}
+            onCancel={() => setEditModalVisible(false)}
+            onSuccess={() => {
+              setEditModalVisible(false);
+              message.success('批次计划更新成功');
+            }}
+          />
+
+          <BatchPlanDetailModal
+            visible={detailModalVisible}
+            record={currentRecord}
+            onCancel={() => setDetailModalVisible(false)}
+            onEdit={() => {
+              setDetailModalVisible(false);
+              setEditModalVisible(true);
+            }}
+          />
+
+          <BatchPlanCancelModal
+            visible={cancelModalVisible}
+            record={currentRecord}
+            onCancel={() => setCancelModalVisible(false)}
+            onConfirm={() => {
+              setCancelModalVisible(false);
+              message.success('计划已取消');
+            }}
+          />
+        </>
+      )}
+
+      {/* 应急专家库弹窗 */}
+      {configPath === '/expert.config.json' && (
+        <>
+          <ExpertCreateModal
+            visible={createModalVisible}
+            onCancel={() => setCreateModalVisible(false)}
+            onSuccess={() => {
+              setCreateModalVisible(false);
+              message.success('专家创建成功');
+            }}
+          />
+
+          <ExpertEditModal
+            visible={editModalVisible}
+            record={currentRecord}
+            onCancel={() => setEditModalVisible(false)}
+            onSuccess={() => {
+              setEditModalVisible(false);
+              message.success('专家信息更新成功');
+            }}
+          />
+
+          <ExpertDeleteModal
+            visible={deleteModalVisible}
+            record={currentRecord}
+            onCancel={() => setDeleteModalVisible(false)}
+            onConfirm={() => {
+              setDeleteModalVisible(false);
+              message.success('专家已删除');
+            }}
           />
         </>
       )}

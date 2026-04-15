@@ -1,0 +1,243 @@
+{
+  "pageMeta": {
+    "title": "批次计划管理",
+    "description": "管理危化品运输批次计划，支持计划提报、审批、执行跟踪"
+  },
+  "searchConfig": {
+    "items": [
+      {
+        "key": "dateRange",
+        "label": "计划日期",
+        "type": "dateRange",
+        "placeholder": "请选择日期范围"
+      },
+      {
+        "key": "status",
+        "label": "计划状态",
+        "type": "select",
+        "placeholder": "请选择状态",
+        "options": [
+          { "label": "待审批", "value": "pending" },
+          { "label": "已通过", "value": "approved" },
+          { "label": "已驳回", "value": "rejected" },
+          { "label": "已执行", "value": "executed" },
+          { "label": "已取消", "value": "cancelled" }
+        ]
+      },
+      {
+        "key": "cargoName",
+        "label": "货物名称",
+        "type": "input",
+        "placeholder": "请输入货物名称"
+      }
+    ]
+  },
+  "tableConfig": {
+    "rowKey": "id",
+    "columns": [
+      {
+        "key": "planNo",
+        "title": "计划编号",
+        "type": "text",
+        "width": 150
+      },
+      {
+        "key": "passTime",
+        "title": "通行时间",
+        "type": "datetime",
+        "width": 180
+      },
+      {
+        "key": "vehicleCount",
+        "title": "车数",
+        "type": "text",
+        "width": 80,
+        "align": "center"
+      },
+      {
+        "key": "cargoName",
+        "title": "货物名称",
+        "type": "text",
+        "width": 150
+      },
+      {
+        "key": "expertName",
+        "title": "应急专家",
+        "type": "text",
+        "width": 120
+      },
+      {
+        "key": "status",
+        "title": "状态",
+        "type": "tag",
+        "width": 100,
+        "dictKey": "planStatus"
+      },
+      {
+        "key": "approvalComment",
+        "title": "审批意见",
+        "type": "text",
+        "ellipsis": true
+      },
+      {
+        "key": "actions",
+        "title": "操作",
+        "type": "actions",
+        "width": 200,
+        "fixed": "right"
+      }
+    ],
+    "dicts": {
+      "planStatus": {
+        "pending": { "label": "待审批", "color": "orange", "variant": "filled" },
+        "approved": { "label": "已通过", "color": "green", "variant": "filled" },
+        "rejected": { "label": "已驳回", "color": "red", "variant": "filled" },
+        "executed": { "label": "已执行", "color": "blue", "variant": "filled" },
+        "cancelled": { "label": "已取消", "color": "gray", "variant": "filled" },
+        "draft": { "label": "草稿", "color": "default", "variant": "filled" }
+      }
+    }
+  },
+  "mockData": [
+    {
+      "id": "BP001",
+      "planNo": "JH202401150001",
+      "planDate": "2024-01-15",
+      "timeSlot": "08:00-12:00",
+      "passTime": "2024-01-15 08:00~12:00",
+      "vehicleCount": 5,
+      "cargoName": "液氯",
+      "cargoCode": "LC001",
+      "expertId": "EXP001",
+      "expertName": "张安全",
+      "expertSnapshot": { "id": "EXP001", "name": "张安全", "phone": "13800138001", "field": "化学品运输" },
+      "status": "approved",
+      "approvalComment": "审批通过，请按计划执行",
+      "remark": "冬季运输注意防滑",
+      "createTime": "2024-01-10 09:30:00",
+      "updateTime": "2024-01-10 14:20:00",
+      "approvalFlow": [
+        { "node": "提交", "time": "2024-01-10 09:30:00", "operator": "李四" },
+        { "node": "审批", "time": "2024-01-10 14:20:00", "operator": "王经理", "comment": "审批通过" }
+      ]
+    },
+    {
+      "id": "BP002",
+      "planNo": "JH202401160002",
+      "planDate": "2024-01-16",
+      "timeSlot": "14:00-18:00",
+      "passTime": "2024-01-16 14:00~18:00",
+      "vehicleCount": 3,
+      "cargoName": "硫酸",
+      "cargoCode": "LS001",
+      "expertId": "EXP002",
+      "expertName": "李防护",
+      "expertSnapshot": { "id": "EXP002", "name": "李防护", "phone": "13800138002", "field": "腐蚀品处理" },
+      "status": "pending",
+      "approvalComment": "",
+      "remark": "",
+      "createTime": "2024-01-11 10:00:00",
+      "updateTime": "2024-01-11 10:00:00",
+      "approvalFlow": [
+        { "node": "提交", "time": "2024-01-11 10:00:00", "operator": "李四" }
+      ]
+    },
+    {
+      "id": "BP003",
+      "planNo": "JH202401170003",
+      "planDate": "2024-01-17",
+      "timeSlot": "20:00-24:00",
+      "passTime": "2024-01-17 20:00~24:00",
+      "vehicleCount": 8,
+      "cargoName": "液氨",
+      "cargoCode": "LA001",
+      "expertId": "EXP003",
+      "expertName": "王应急",
+      "expertSnapshot": { "id": "EXP003", "name": "王应急", "phone": "13800138003", "field": "气体泄漏处置" },
+      "status": "rejected",
+      "approvalComment": "时间段选择不当，请调整至白天",
+      "remark": "夜间运输申请",
+      "createTime": "2024-01-12 08:00:00",
+      "updateTime": "2024-01-12 16:30:00",
+      "approvalFlow": [
+        { "node": "提交", "time": "2024-01-12 08:00:00", "operator": "李四" },
+        { "node": "审批", "time": "2024-01-12 16:30:00", "operator": "王经理", "comment": "时间段选择不当，请调整至白天" }
+      ]
+    },
+    {
+      "id": "BP004",
+      "planNo": "JH202401180004",
+      "planDate": "2024-01-18",
+      "timeSlot": "08:00-12:00",
+      "passTime": "2024-01-18 08:00~12:00",
+      "vehicleCount": 2,
+      "cargoName": "硝酸",
+      "cargoCode": "XS001",
+      "expertId": "EXP001",
+      "expertName": "张安全",
+      "expertSnapshot": { "id": "EXP001", "name": "张安全", "phone": "13800138001", "field": "化学品运输" },
+      "status": "executed",
+      "approvalComment": "审批通过",
+      "remark": "",
+      "createTime": "2024-01-13 09:00:00",
+      "updateTime": "2024-01-18 12:30:00",
+      "approvalFlow": [
+        { "node": "提交", "time": "2024-01-13 09:00:00", "operator": "李四" },
+        { "node": "审批", "time": "2024-01-13 11:00:00", "operator": "王经理", "comment": "审批通过" },
+        { "node": "执行", "time": "2024-01-18 12:30:00", "operator": "系统", "comment": "计划已执行完成" }
+      ]
+    },
+    {
+      "id": "BP005",
+      "planNo": "JH202401190005",
+      "planDate": "2024-01-19",
+      "timeSlot": "14:00-18:00",
+      "passTime": "2024-01-19 14:00~18:00",
+      "vehicleCount": 6,
+      "cargoName": "盐酸",
+      "cargoCode": "YS001",
+      "expertId": "EXP002",
+      "expertName": "李防护",
+      "expertSnapshot": { "id": "EXP002", "name": "李防护", "phone": "13800138002", "field": "腐蚀品处理" },
+      "status": "cancelled",
+      "approvalComment": "",
+      "remark": "客户取消订单",
+      "createTime": "2024-01-14 10:00:00",
+      "updateTime": "2024-01-15 09:00:00",
+      "approvalFlow": [
+        { "node": "提交", "time": "2024-01-14 10:00:00", "operator": "李四" },
+        { "node": "取消", "time": "2024-01-15 09:00:00", "operator": "李四", "comment": "客户取消订单" }
+      ]
+    },
+    {
+      "id": "BP006",
+      "planNo": "JH202401200006",
+      "planDate": "2024-01-20",
+      "timeSlot": "08:00-12:00",
+      "passTime": "2024-01-20 08:00~12:00",
+      "vehicleCount": 4,
+      "cargoName": "液氯",
+      "cargoCode": "LC001",
+      "expertId": "",
+      "expertName": "",
+      "expertSnapshot": null,
+      "status": "draft",
+      "approvalComment": "",
+      "remark": "草稿状态",
+      "createTime": "2024-01-15 14:00:00",
+      "updateTime": "2024-01-15 14:00:00",
+      "approvalFlow": []
+    }
+  ],
+  "actions": {
+    "row": ["detail", "edit", "cancel"],
+    "batch": [],
+    "global": ["create"]
+  },
+  "pagination": {
+    "defaultPageSize": 10,
+    "pageSizeOptions": [10, 20, 50],
+    "showSizeChanger": true,
+    "showTotal": true
+  }
+}

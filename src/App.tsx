@@ -1,6 +1,7 @@
 import { HashRouter as Router, Link, useLocation, useNavigate } from 'react-router-dom'
-import { Layout, Menu, Button } from 'antd'
-import { SettingOutlined } from '@ant-design/icons'
+import { Layout, Menu, Button, Dropdown, message } from 'antd'
+import { SettingOutlined, UserOutlined, DownOutlined } from '@ant-design/icons'
+import type { MenuProps } from 'antd'
 import AppRoutes from './router'
 import './App.css'
 
@@ -19,6 +20,23 @@ const Sidebar = () => {
   const handleSettingClick = () => {
     navigate('/settings')
   }
+
+  // 个人中心下拉菜单
+  const userMenuItems: MenuProps['items'] = [
+    {
+      key: 'change-password',
+      label: <Link to="/change-password">修改密码</Link>,
+    },
+    {
+      key: 'logout',
+      label: '退出登录',
+      onClick: () => {
+        // 实际项目中这里应该清除登录态
+        message.success('已退出登录')
+        navigate('/login')
+      },
+    },
+  ]
   
   return (
     <Sider width={200} style={{ background: '#fff' }}>
@@ -35,13 +53,38 @@ const Sidebar = () => {
         mode="inline"
         selectedKeys={[selectedKey]}
         style={{ height: '100%', borderRight: 0 }}
-        defaultOpenKeys={['shipperManagement']}
+        defaultOpenKeys={['shipperManagement', 'planManagement', 'resourceManagement']}
       >
+        {/* 托运企业管理 */}
         <SubMenu key="shipperManagement" title="托运企业管理">
           <Menu.Item key="shippers">
             <Link to="/shippers">托运企业列表</Link>
           </Menu.Item>
         </SubMenu>
+
+        {/* 计划管理 */}
+        <SubMenu key="planManagement" title="计划管理">
+          <Menu.Item key="batch-plans">
+            <Link to="/batch-plans">批次计划管理</Link>
+          </Menu.Item>
+        </SubMenu>
+
+        {/* 资源管理 */}
+        <SubMenu key="resourceManagement" title="资源管理">
+          <Menu.Item key="experts">
+            <Link to="/experts">应急专家库</Link>
+          </Menu.Item>
+          <Menu.Item key="carrier">
+            <Link to="/carrier">承运商端</Link>
+          </Menu.Item>
+        </SubMenu>
+
+        {/* 企业信息 */}
+        <Menu.Item key="company-info">
+          <Link to="/company-info">企业信息管理</Link>
+        </Menu.Item>
+
+        {/* 测试页面 */}
         <SubMenu key="test" title="测试页面">
           <Menu.Item key="orders">
             <Link to="/orders">订单管理</Link>
@@ -53,10 +96,25 @@ const Sidebar = () => {
             <Link to="/products">产品管理</Link>
           </Menu.Item>
         </SubMenu>
-        <Menu.Item key="carrier">
-          <Link to="/carrier">承运商端</Link>
-        </Menu.Item>
       </Menu>
+
+      {/* 底部个人中心 */}
+      <div style={{ 
+        position: 'absolute', 
+        bottom: 0, 
+        width: '100%', 
+        padding: '16px', 
+        borderTop: '1px solid #f0f0f0',
+        background: '#fff'
+      }}>
+        <Dropdown menu={{ items: userMenuItems }} placement="topLeft">
+          <Button type="text" block style={{ textAlign: 'left' }}>
+            <UserOutlined />
+            <span style={{ marginLeft: 8 }}>管理员</span>
+            <DownOutlined style={{ float: 'right', marginTop: 6 }} />
+          </Button>
+        </Dropdown>
+      </div>
     </Sider>
   )
 }
