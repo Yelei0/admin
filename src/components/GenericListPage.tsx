@@ -224,7 +224,7 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
 
   // 渲染搜索表单
   const renderSearchForm = () => {
-    if (!config || !config.searchConfig || config.searchConfig.length === 0) {
+    if (!config || !config.searchConfig || !config.searchConfig.items || config.searchConfig.items.length === 0) {
       return null;
     }
 
@@ -235,7 +235,7 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
         onFinish={handleSearch}
         style={{ marginBottom: 16 }}
       >
-        {config.searchConfig.map(item => {
+        {config.searchConfig.items.map(item => {
           switch (item.type) {
             case 'input':
               return (

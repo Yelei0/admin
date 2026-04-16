@@ -63,10 +63,15 @@ export interface PageMeta {
   description: string;
 }
 
+// 搜索配置类型（包含items数组）
+export interface SearchConfig {
+  items: SearchConfigItem[];
+}
+
 // 完整的配置文件类型
 export interface ListConfig {
   pageMeta: PageMeta;
-  searchConfig: SearchConfigItem[];
+  searchConfig: SearchConfig;
   tableConfig: TableConfig;
   mockData: any[];
   actions: ActionsConfig;
