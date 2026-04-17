@@ -509,29 +509,6 @@ const CarrierPlanDetailPage = () => {
 
   const columns = [
     {
-      title: '',
-      key: 'expand',
-      type: 'expand',
-      width: 40,
-      render: (_, record: PlanDetail) => (
-        <Card size="small" style={{ margin: 0 }}>
-          <Descriptions column={2} size="small">
-            <Descriptions.Item label="创建时间">{record.createTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="审批时间">{record.approvalTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="到达集结点时间">{record.assembleArrivalTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="完成培训时间">{record.trainingCompleteTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="完成自查时间">{record.selfCheckCompleteTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="自查确认时间">{record.selfCheckConfirmTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="编队完成时间">{record.formingCompleteTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="上桥审批时间">{record.bridgeApprovalTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="押运开始时间">{record.escortStartTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="完成时间">{record.completeTime || '-'}</Descriptions.Item>
-            <Descriptions.Item label="取消时间" span={2}>{record.cancelTime || '-'}</Descriptions.Item>
-          </Descriptions>
-        </Card>
-      ),
-    },
-    {
       title: '批次计划编号',
       dataIndex: 'batchPlanNo',
       key: 'batchPlanNo',
@@ -638,9 +615,57 @@ const CarrierPlanDetailPage = () => {
       width: 150,
     },
     {
+      title: '到达集结点时间',
+      dataIndex: 'assembleArrivalTime',
+      key: 'assembleArrivalTime',
+      width: 150,
+    },
+    {
+      title: '完成培训时间',
+      dataIndex: 'trainingCompleteTime',
+      key: 'trainingCompleteTime',
+      width: 150,
+    },
+    {
+      title: '完成自查时间',
+      dataIndex: 'selfCheckCompleteTime',
+      key: 'selfCheckCompleteTime',
+      width: 150,
+    },
+    {
+      title: '自查确认时间',
+      dataIndex: 'selfCheckConfirmTime',
+      key: 'selfCheckConfirmTime',
+      width: 150,
+    },
+    {
+      title: '编队完成时间',
+      dataIndex: 'formingCompleteTime',
+      key: 'formingCompleteTime',
+      width: 150,
+    },
+    {
+      title: '上桥审批时间',
+      dataIndex: 'bridgeApprovalTime',
+      key: 'bridgeApprovalTime',
+      width: 150,
+    },
+    {
+      title: '押运开始时间',
+      dataIndex: 'escortStartTime',
+      key: 'escortStartTime',
+      width: 150,
+    },
+    {
       title: '完成时间',
       dataIndex: 'completeTime',
       key: 'completeTime',
+      width: 150,
+    },
+    {
+      title: '取消时间',
+      dataIndex: 'cancelTime',
+      key: 'cancelTime',
       width: 150,
     },
     {
