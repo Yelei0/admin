@@ -233,7 +233,7 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
         layout="inline"
         initialValues={searchValues}
         onFinish={handleSearch}
-        style={{ marginBottom: 16 }}
+        style={{ marginBottom: 16, display: 'flex', flexWrap: 'wrap', gap: '12px 24px' }}
       >
         {config.searchConfig.items.map(item => {
           switch (item.type) {
@@ -310,7 +310,9 @@ const GenericListPage: React.FC<GenericListPageProps> = ({ configPath }) => {
               icon={<PlusOutlined />} 
               onClick={() => setCreateModalVisible(true)}
             >
-              新增托运企业
+              {configPath === '/batch-plan.config.json' ? '新增批次计划' : 
+               configPath === '/expert.config.json' ? '新增专家' : 
+               '新增'}
             </Button>
           )}
           {hasBatchActions && config.actions.batch.includes('batchDelete') && (

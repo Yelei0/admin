@@ -3,16 +3,18 @@ import { Card } from 'antd';
 
 const CarrierPage: React.FC = () => {
   return (
-    <Card 
-      title="承运商端" 
-      style={{ 
-        height: 'calc(100vh - 48px)', 
+    <Card
+      title="承运商端"
+      style={{
+        height: 'calc(100vh - 48px)',
         margin: '-24px',
-        borderRadius: 0 
+        borderRadius: 0
       }}
-      bodyStyle={{ 
-        padding: 0, 
-        height: 'calc(100% - 56px)' 
+      styles={{
+        body: {
+          padding: 0,
+          height: 'calc(100% - 56px)'
+        }
       }}
     >
       <iframe

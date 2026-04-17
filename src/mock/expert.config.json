@@ -58,20 +58,8 @@
         "key": "field",
         "title": "专业领域",
         "type": "tag",
-        "width": 130,
+        "width": 200,
         "dictKey": "expertField"
-      },
-      {
-        "key": "company",
-        "title": "所在单位",
-        "type": "text",
-        "width": 180
-      },
-      {
-        "key": "certificateNo",
-        "title": "证书号",
-        "type": "text",
-        "width": 150
       },
       {
         "key": "remark",
@@ -104,72 +92,50 @@
       "name": "张安全",
       "phone": "13800138001",
       "idCard": "110101198001011234",
-      "field": "chemical_transport",
-      "company": "北京市危化品安全研究院",
-      "certificateNo": "ZJ20240001",
-      "remark": "高级安全工程师，15年从业经验",
-      "createTime": "2024-01-01 10:00:00",
-      "updateTime": "2024-01-01 10:00:00"
+      "field": ["chemical_transport", "fire"],
+      "fieldLabels": "化学品运输、火灾应急",
+      "remark": "资深化学品运输安全专家",
+      "createTime": "2024-01-01 10:00:00"
     },
     {
       "id": "EXP002",
       "name": "李防护",
       "phone": "13800138002",
       "idCard": "110101198502023456",
-      "field": "corrosive",
-      "company": "中国化学品安全协会",
-      "certificateNo": "ZJ20240002",
-      "remark": "腐蚀品处理专家",
-      "createTime": "2024-01-02 11:00:00",
-      "updateTime": "2024-01-02 11:00:00"
+      "field": ["corrosive"],
+      "fieldLabels": "腐蚀品处理",
+      "remark": "腐蚀品应急处置专家",
+      "createTime": "2024-01-02 11:00:00"
     },
     {
       "id": "EXP003",
       "name": "王应急",
       "phone": "13800138003",
       "idCard": "110101199003035678",
-      "field": "gas_leak",
-      "company": "国家应急救援中心",
-      "certificateNo": "ZJ20240003",
-      "remark": "气体泄漏应急处置专家",
-      "createTime": "2024-01-03 09:00:00",
-      "updateTime": "2024-01-03 09:00:00"
+      "field": ["gas_leak", "environment"],
+      "fieldLabels": "气体泄漏处置、环境保护",
+      "remark": "气体泄漏与环保专家",
+      "createTime": "2024-01-03 09:30:00"
     },
     {
       "id": "EXP004",
-      "name": "赵消防",
+      "name": "赵救援",
       "phone": "13800138004",
-      "idCard": "110101197510104321",
-      "field": "fire",
-      "company": "北京市消防总队",
-      "certificateNo": "ZJ20240004",
-      "remark": "危化品火灾应急专家",
-      "createTime": "2024-01-04 14:00:00",
-      "updateTime": "2024-01-04 14:00:00"
+      "idCard": "110101198808084321",
+      "field": ["medical"],
+      "fieldLabels": "医疗急救",
+      "remark": "医疗急救专家",
+      "createTime": "2024-01-04 14:00:00"
     },
     {
       "id": "EXP005",
-      "name": "孙环保",
+      "name": "刘环保",
       "phone": "13800138005",
-      "idCard": "110101198808085432",
-      "field": "environment",
-      "company": "环境保护部应急中心",
-      "certificateNo": "ZJ20240005",
-      "remark": "环境污染应急处置专家",
-      "createTime": "2024-01-05 16:00:00",
-      "updateTime": "2024-01-05 16:00:00"
-    },
-    {
-      "id": "EXP006",
-      "name": "周医疗",
-      "phone": "13800138006",
-      "idCard": "110101199212126543",
-      "field": "medical",
-      "company": "北京急救中心",
-      "certificateNo": "ZJ20240006",
-      "remark": "化学品中毒急救专家",
-      "createTime": "2024-01-06 08:30:00",
-      "updateTime": "2024-01-06 08:30:00"
+      "idCard": "110101199510105432",
+      "field": ["environment", "chemical_transport"],
+      "fieldLabels": "环境保护、化学品运输",
+      "remark": "环保与运输安全专家",
+      "createTime": "2024-01-05 16:00:00"
     }
   ],
   "actions": {

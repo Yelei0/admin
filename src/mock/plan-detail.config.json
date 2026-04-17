@@ -1,0 +1,434 @@
+{
+  "pageMeta": {
+    "title": "计划明细管理",
+    "description": "管理危化品运输计划明细，支持状态追踪、异常监控与报表导出"
+  },
+  "searchConfig": {
+    "items": [
+      {
+        "key": "batchPlanNo",
+        "label": "批次计划编号",
+        "type": "input",
+        "placeholder": "请输入批次计划编号"
+      },
+      {
+        "key": "planDate",
+        "label": "计划日期",
+        "type": "dateRange",
+        "placeholder": "请选择日期范围"
+      },
+      {
+        "key": "carrierCompany",
+        "label": "承运企业",
+        "type": "input",
+        "placeholder": "请输入承运企业"
+      },
+      {
+        "key": "plateNo",
+        "label": "车牌号",
+        "type": "input",
+        "placeholder": "请输入车牌号"
+      },
+      {
+        "key": "cargoType",
+        "label": "货物类型",
+        "type": "select",
+        "placeholder": "请选择货物类型",
+        "options": [
+          { "label": "液氯", "value": "liquid_chlorine" },
+          { "label": "硫酸", "value": "sulfuric_acid" },
+          { "label": "液氨", "value": "liquid_ammonia" },
+          { "label": "硝酸", "value": "nitric_acid" },
+          { "label": "盐酸", "value": "hydrochloric_acid" },
+          { "label": "氢氧化钠", "value": "sodium_hydroxide" }
+        ]
+      },
+      {
+        "key": "status",
+        "label": "执行状态",
+        "type": "select",
+        "placeholder": "请选择状态",
+        "options": [
+          { "label": "待集结", "value": "waiting_gather" },
+          { "label": "已集结", "value": "gathered" },
+          { "label": "押运中", "value": "escorting" },
+          { "label": "已过桥", "value": "crossed_bridge" },
+          { "label": "已完成", "value": "completed" },
+          { "label": "异常", "value": "abnormal" }
+        ]
+      }
+    ]
+  },
+  "tableConfig": {
+    "rowKey": "id",
+    "columns": [
+      {
+        "key": "detailId",
+        "title": "明细ID",
+        "type": "text",
+        "width": 120
+      },
+      {
+        "key": "batchPlanNo",
+        "title": "关联批次号",
+        "type": "text",
+        "width": 150
+      },
+      {
+        "key": "carrierCompany",
+        "title": "承运方",
+        "type": "text",
+        "width": 150
+      },
+      {
+        "key": "plateNo",
+        "title": "车牌",
+        "type": "text",
+        "width": 120
+      },
+      {
+        "key": "driver",
+        "title": "驾驶员",
+        "type": "text",
+        "width": 100
+      },
+      {
+        "key": "cargoAmount",
+        "title": "货物量",
+        "type": "text",
+        "width": 100,
+        "align": "center"
+      },
+      {
+        "key": "planTime",
+        "title": "计划时间",
+        "type": "datetime",
+        "width": 160
+      },
+      {
+        "key": "actualNodeTime",
+        "title": "实际节点时间",
+        "type": "text",
+        "width": 150
+      },
+      {
+        "key": "status",
+        "title": "当前状态",
+        "type": "tag",
+        "width": 100,
+        "dictKey": "detailStatus"
+      },
+      {
+        "key": "actions",
+        "title": "操作",
+        "type": "actions",
+        "width": 120,
+        "fixed": "right"
+      }
+    ],
+    "dicts": {
+      "detailStatus": {
+        "waiting_gather": { "label": "待集结", "color": "default", "variant": "filled" },
+        "gathered": { "label": "已集结", "color": "blue", "variant": "filled" },
+        "escorting": { "label": "押运中", "color": "orange", "variant": "filled" },
+        "crossed_bridge": { "label": "已过桥", "color": "cyan", "variant": "filled" },
+        "completed": { "label": "已完成", "color": "green", "variant": "filled" },
+        "abnormal": { "label": "异常", "color": "red", "variant": "filled" }
+      }
+    }
+  },
+  "mockData": [
+    {
+      "id": "PD001",
+      "detailId": "MX20240115001",
+      "batchPlanNo": "JH202401150001",
+      "batchPlanId": "BP001",
+      "carrierCompany": "北京危化运输有限公司",
+      "plateNo": "京A12345",
+      "driver": "王师傅",
+      "driverPhone": "13900139001",
+      "cargoType": "liquid_chlorine",
+      "cargoTypeName": "液氯",
+      "cargoAmount": "20吨",
+      "planTime": "2024-01-15 08:00",
+      "actualNodeTime": "08:15集结/09:30上桥",
+      "status": "completed",
+      "isAbnormal": false,
+      "selfCheckResult": {
+        "vehicleStatus": "正常",
+        "safetyEquipment": "齐全",
+        "driverStatus": "良好",
+        "checkTime": "2024-01-15 07:45"
+      },
+      "escortTeam": {
+        "leader": "张押运",
+        "members": ["李押运", "赵押运"],
+        "contact": "13800138001"
+      },
+      "timeline": [
+        { "node": "集结", "planTime": "08:00", "actualTime": "08:15", "status": "completed" },
+        { "node": "上桥", "planTime": "09:00", "actualTime": "09:30", "status": "completed" },
+        { "node": "下桥", "planTime": "10:30", "actualTime": "10:45", "status": "completed" },
+        { "node": "完成", "planTime": "12:00", "actualTime": "11:50", "status": "completed" }
+      ],
+      "abnormalRecords": [],
+      "trackingUrl": "https://tracking.example.com/PD001",
+      "monitorUrl": "https://monitor.example.com/PD001"
+    },
+    {
+      "id": "PD002",
+      "detailId": "MX20240115002",
+      "batchPlanNo": "JH202401150001",
+      "batchPlanId": "BP001",
+      "carrierCompany": "天津安全物流集团",
+      "plateNo": "津B67890",
+      "driver": "李师傅",
+      "driverPhone": "13900139002",
+      "cargoType": "sulfuric_acid",
+      "cargoTypeName": "硫酸",
+      "cargoAmount": "15吨",
+      "planTime": "2024-01-15 08:00",
+      "actualNodeTime": "08:05集结/进行中",
+      "status": "escorting",
+      "isAbnormal": false,
+      "selfCheckResult": {
+        "vehicleStatus": "正常",
+        "safetyEquipment": "齐全",
+        "driverStatus": "良好",
+        "checkTime": "2024-01-15 07:50"
+      },
+      "escortTeam": {
+        "leader": "陈押运",
+        "members": ["刘押运"],
+        "contact": "13800138002"
+      },
+      "timeline": [
+        { "node": "集结", "planTime": "08:00", "actualTime": "08:05", "status": "completed" },
+        { "node": "上桥", "planTime": "09:00", "actualTime": "09:10", "status": "completed" },
+        { "node": "下桥", "planTime": "10:30", "actualTime": null, "status": "pending" },
+        { "node": "完成", "planTime": "12:00", "actualTime": null, "status": "pending" }
+      ],
+      "abnormalRecords": [],
+      "trackingUrl": "https://tracking.example.com/PD002",
+      "monitorUrl": "https://monitor.example.com/PD002"
+    },
+    {
+      "id": "PD003",
+      "detailId": "MX20240116001",
+      "batchPlanNo": "JH202401160002",
+      "batchPlanId": "BP002",
+      "carrierCompany": "河北危运集团",
+      "plateNo": "冀C11111",
+      "driver": "张师傅",
+      "driverPhone": "13900139003",
+      "cargoType": "liquid_ammonia",
+      "cargoTypeName": "液氨",
+      "cargoAmount": "25吨",
+      "planTime": "2024-01-16 14:00",
+      "actualNodeTime": "延误-查看原因",
+      "status": "abnormal",
+      "isAbnormal": true,
+      "abnormalReason": "车辆故障，正在维修",
+      "selfCheckResult": {
+        "vehicleStatus": "异常",
+        "safetyEquipment": "齐全",
+        "driverStatus": "良好",
+        "checkTime": "2024-01-16 13:30"
+      },
+      "escortTeam": {
+        "leader": "孙押运",
+        "members": ["周押运", "吴押运"],
+        "contact": "13800138003"
+      },
+      "timeline": [
+        { "node": "集结", "planTime": "14:00", "actualTime": null, "status": "abnormal" }
+      ],
+      "abnormalRecords": [
+        { "time": "2024-01-16 13:45", "type": "车辆故障", "description": "发动机异响，需维修", "reporter": "张师傅" }
+      ],
+      "trackingUrl": "https://tracking.example.com/PD003",
+      "monitorUrl": "https://monitor.example.com/PD003"
+    },
+    {
+      "id": "PD004",
+      "detailId": "MX20240116002",
+      "batchPlanNo": "JH202401160002",
+      "batchPlanId": "BP002",
+      "carrierCompany": "山东危化品运输公司",
+      "plateNo": "鲁D22222",
+      "driver": "赵师傅",
+      "driverPhone": "13900139004",
+      "cargoType": "nitric_acid",
+      "cargoTypeName": "硝酸",
+      "cargoAmount": "18吨",
+      "planTime": "2024-01-16 14:00",
+      "actualNodeTime": "14:00集结/15:20上桥",
+      "status": "crossed_bridge",
+      "isAbnormal": false,
+      "selfCheckResult": {
+        "vehicleStatus": "正常",
+        "safetyEquipment": "齐全",
+        "driverStatus": "良好",
+        "checkTime": "2024-01-16 13:40"
+      },
+      "escortTeam": {
+        "leader": "郑押运",
+        "members": ["钱押运"],
+        "contact": "13800138004"
+      },
+      "timeline": [
+        { "node": "集结", "planTime": "14:00", "actualTime": "14:00", "status": "completed" },
+        { "node": "上桥", "planTime": "15:00", "actualTime": "15:20", "status": "completed" },
+        { "node": "下桥", "planTime": "16:30", "actualTime": null, "status": "pending" },
+        { "node": "完成", "planTime": "18:00", "actualTime": null, "status": "pending" }
+      ],
+      "abnormalRecords": [],
+      "trackingUrl": "https://tracking.example.com/PD004",
+      "monitorUrl": "https://monitor.example.com/PD004"
+    },
+    {
+      "id": "PD005",
+      "detailId": "MX20240117001",
+      "batchPlanNo": "JH202401170003",
+      "batchPlanId": "BP003",
+      "carrierCompany": "河南危险品运输公司",
+      "plateNo": "豫E33333",
+      "driver": "刘师傅",
+      "driverPhone": "13900139005",
+      "cargoType": "hydrochloric_acid",
+      "cargoTypeName": "盐酸",
+      "cargoAmount": "12吨",
+      "planTime": "2024-01-17 20:00",
+      "actualNodeTime": "已取消-查看原因",
+      "status": "abnormal",
+      "isAbnormal": true,
+      "abnormalReason": "计划取消",
+      "selfCheckResult": null,
+      "escortTeam": null,
+      "timeline": [],
+      "abnormalRecords": [
+        { "time": "2024-01-17 18:00", "type": "计划取消", "description": "客户临时取消运输需求", "reporter": "调度员" }
+      ],
+      "trackingUrl": null,
+      "monitorUrl": null
+    },
+    {
+      "id": "PD006",
+      "detailId": "MX20240118001",
+      "batchPlanNo": "JH202401180004",
+      "batchPlanId": "BP004",
+      "carrierCompany": "山西安全运输集团",
+      "plateNo": "晋F44444",
+      "driver": "陈师傅",
+      "driverPhone": "13900139006",
+      "cargoType": "sodium_hydroxide",
+      "cargoTypeName": "氢氧化钠",
+      "cargoAmount": "30吨",
+      "planTime": "2024-01-18 08:00",
+      "actualNodeTime": "待集结",
+      "status": "waiting_gather",
+      "isAbnormal": false,
+      "selfCheckResult": null,
+      "escortTeam": {
+        "leader": "冯押运",
+        "members": ["褚押运", "卫押运"],
+        "contact": "13800138006"
+      },
+      "timeline": [
+        { "node": "集结", "planTime": "08:00", "actualTime": null, "status": "pending" },
+        { "node": "上桥", "planTime": "09:00", "actualTime": null, "status": "pending" },
+        { "node": "下桥", "planTime": "10:30", "actualTime": null, "status": "pending" },
+        { "node": "完成", "planTime": "12:00", "actualTime": null, "status": "pending" }
+      ],
+      "abnormalRecords": [],
+      "trackingUrl": "https://tracking.example.com/PD006",
+      "monitorUrl": "https://monitor.example.com/PD006"
+    },
+    {
+      "id": "PD007",
+      "detailId": "MX20240118002",
+      "batchPlanNo": "JH202401180004",
+      "batchPlanId": "BP004",
+      "carrierCompany": "陕西危化运输公司",
+      "plateNo": "陕G55555",
+      "driver": "杨师傅",
+      "driverPhone": "13900139007",
+      "cargoType": "liquid_chlorine",
+      "cargoTypeName": "液氯",
+      "cargoAmount": "22吨",
+      "planTime": "2024-01-18 08:00",
+      "actualNodeTime": "07:55集结/08:45上桥",
+      "status": "gathered",
+      "isAbnormal": false,
+      "selfCheckResult": {
+        "vehicleStatus": "正常",
+        "safetyEquipment": "齐全",
+        "driverStatus": "良好",
+        "checkTime": "2024-01-18 07:40"
+      },
+      "escortTeam": {
+        "leader": "蒋押运",
+        "members": ["沈押运"],
+        "contact": "13800138007"
+      },
+      "timeline": [
+        { "node": "集结", "planTime": "08:00", "actualTime": "07:55", "status": "completed" },
+        { "node": "上桥", "planTime": "09:00", "actualTime": "08:45", "status": "completed" },
+        { "node": "下桥", "planTime": "10:30", "actualTime": null, "status": "pending" },
+        { "node": "完成", "planTime": "12:00", "actualTime": null, "status": "pending" }
+      ],
+      "abnormalRecords": [],
+      "trackingUrl": "https://tracking.example.com/PD007",
+      "monitorUrl": "https://monitor.example.com/PD007"
+    },
+    {
+      "id": "PD008",
+      "detailId": "MX20240119001",
+      "batchPlanNo": "JH202401190005",
+      "batchPlanId": "BP005",
+      "carrierCompany": "辽宁危险品物流",
+      "plateNo": "辽H66666",
+      "driver": "黄师傅",
+      "driverPhone": "13900139008",
+      "cargoType": "sulfuric_acid",
+      "cargoTypeName": "硫酸",
+      "cargoAmount": "16吨",
+      "planTime": "2024-01-19 14:00",
+      "actualNodeTime": "报警-查看原因",
+      "status": "abnormal",
+      "isAbnormal": true,
+      "abnormalReason": "偏离预定路线",
+      "selfCheckResult": {
+        "vehicleStatus": "正常",
+        "safetyEquipment": "齐全",
+        "driverStatus": "良好",
+        "checkTime": "2024-01-19 13:30"
+      },
+      "escortTeam": {
+        "leader": "韩押运",
+        "members": ["杨押运", "朱押运"],
+        "contact": "13800138008"
+      },
+      "timeline": [
+        { "node": "集结", "planTime": "14:00", "actualTime": "13:55", "status": "completed" },
+        { "node": "上桥", "planTime": "15:00", "actualTime": "15:10", "status": "completed" }
+      ],
+      "abnormalRecords": [
+        { "time": "2024-01-19 15:30", "type": "路线偏离", "description": "GPS检测到车辆偏离预定路线500米", "reporter": "系统" }
+      ],
+      "trackingUrl": "https://tracking.example.com/PD008",
+      "monitorUrl": "https://monitor.example.com/PD008"
+    }
+  ],
+  "actions": {
+    "row": ["detail"],
+    "batch": ["export"],
+    "global": []
+  },
+  "pagination": {
+    "defaultPageSize": 20,
+    "pageSizeOptions": [20, 50, 100],
+    "showSizeChanger": true,
+    "showTotal": true
+  }
+}

@@ -3,16 +3,15 @@ import { Card, Form, Input, Button, message, Tabs, Upload, List, Tag, Modal } fr
 import { UploadOutlined, EyeOutlined, DownloadOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 
-const { TabPane } = Tabs;
 const { confirm } = Modal;
 
 // 资料类型配置
 const documentTypes = [
-  { key: 'approval_form', name: '一事一议审批表', required: true },
-  { key: 'assessment_report', name: '通行评估报告', required: true },
-  { key: 'emergency_plan', name: '应急处置方案', required: true },
-  { key: 'business_license', name: '营业执照', required: true },
-  { key: 'hazard_license', name: '危化品经营许可证', required: true },
+  { key: 'approval_form', name: '一事一议审批表', required: false },
+  { key: 'assessment_report', name: '通行评估报告', required: false },
+  { key: 'emergency_plan', name: '应急处置方案', required: false },
+  { key: 'business_license', name: '营业执照', required: false },
+  { key: 'hazard_license', name: '危化品经营许可证', required: false },
   { key: 'other', name: '其他资料', required: false },
 ];
 
@@ -221,73 +220,79 @@ const CompanyInfoPage: React.FC = () => {
     );
   };
 
+  const tabItems = [
+    {
+      key: 'basic',
+      label: '基本信息',
+      children: (
+        <Form
+          form={form}
+          layout="vertical"
+          style={{ maxWidth: 600, marginTop: 24 }}
+        >
+          <Form.Item
+            label="企业名称"
+            name="companyName"
+          >
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item
+            label="统一社会信用代码"
+            name="creditCode"
+          >
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item
+            label="企业地址"
+            name="address"
+          >
+            <Input placeholder="请输入企业地址" />
+          </Form.Item>
+
+          <Form.Item
+            label="联系人姓名"
+            name="contactName"
+          >
+            <Input placeholder="请输入联系人姓名" />
+          </Form.Item>
+
+          <Form.Item
+            label="联系人手机号"
+            name="contactPhone"
+            rules={[
+              { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的11位手机号' }
+            ]}
+            extra="将作为登录账号，请确保唯一"
+          >
+            <Input placeholder="请输入11位手机号" maxLength={11} />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" onClick={handleSaveBasic} loading={loading}>
+              保存
+            </Button>
+          </Form.Item>
+        </Form>
+      ),
+    },
+    {
+      key: 'documents',
+      label: '资质资料',
+      children: (
+        <div style={{ marginTop: 24 }}>
+          {documentTypes.map(type =>
+            renderDocumentUpload(type.key, type.name, type.required)
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <Card title="企业信息管理">
-      <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <TabPane tab="基本信息" key="basic">
-          <Form 
-            form={form} 
-            layout="vertical" 
-            style={{ maxWidth: 600, marginTop: 24 }}
-          >
-            <Form.Item
-              label="企业名称"
-              name="companyName"
-            >
-              <Input disabled />
-            </Form.Item>
-
-            <Form.Item
-              label="统一社会信用代码"
-              name="creditCode"
-            >
-              <Input disabled />
-            </Form.Item>
-
-            <Form.Item
-              label="企业地址"
-              name="address"
-              rules={[{ required: true, message: '请输入企业地址' }]}
-            >
-              <Input placeholder="请输入企业地址" />
-            </Form.Item>
-
-            <Form.Item
-              label="联系人姓名"
-              name="contactName"
-              rules={[{ required: true, message: '请输入联系人姓名' }]}
-            >
-              <Input placeholder="请输入联系人姓名" />
-            </Form.Item>
-
-            <Form.Item
-              label="联系人手机号"
-              name="contactPhone"
-              rules={[
-                { required: true, message: '请输入联系人手机号' },
-                { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的11位手机号' }
-              ]}
-              extra="将作为登录账号，请确保唯一"
-            >
-              <Input placeholder="请输入11位手机号" maxLength={11} />
-            </Form.Item>
-
-            <Form.Item>
-              <Button type="primary" onClick={handleSaveBasic} loading={loading}>
-                保存
-              </Button>
-            </Form.Item>
-          </Form>
-        </TabPane>
-
-        <TabPane tab="资质资料" key="documents">
-          <div style={{ marginTop: 24 }}>
-            {documentTypes.map(type => 
-              renderDocumentUpload(type.key, type.name, type.required)
-            )}
-          </div>
-        </TabPane>
-      </Tabs>
+      <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
     </Card>
   );
 };

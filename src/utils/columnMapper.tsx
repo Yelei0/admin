@@ -32,6 +32,25 @@ const renderTag = (value: any, dictKey: string, dicts: DictConfig): React.ReactN
   if (value === null || value === undefined) return '-';
   const dict = dicts[dictKey];
   if (!dict) return value;
+  
+  // 支持多选数组
+  if (Array.isArray(value)) {
+    if (value.length === 0) return '-';
+    return (
+      <Space size="small" wrap>
+        {value.map((v, index) => {
+          const dictItem = dict[v];
+          if (!dictItem) return <span key={index}>{v}</span>;
+          return (
+            <Tag key={index} color={dictItem.color}>
+              {dictItem.label}
+            </Tag>
+          );
+        })}
+      </Space>
+    );
+  }
+  
   const dictItem = dict[value];
   if (!dictItem) return value;
   return (
@@ -72,6 +91,11 @@ const renderActions = (record: any, rowActions: string[], onAction: (action: str
           case 'documents':
             buttonText = '资料管理';
             buttonType = 'text';
+            break;
+          case 'cancel':
+            buttonText = '取消';
+            buttonType = 'text';
+            danger = true;
             break;
           default:
             buttonText = action;

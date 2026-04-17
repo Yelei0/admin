@@ -37,15 +37,21 @@
     "columns": [
       {
         "key": "planNo",
-        "title": "计划编号",
+        "title": "批次计划编号",
         "type": "text",
         "width": 150
       },
       {
-        "key": "passTime",
-        "title": "通行时间",
-        "type": "datetime",
-        "width": 180
+        "key": "planDate",
+        "title": "计划日期",
+        "type": "text",
+        "width": 120
+      },
+      {
+        "key": "timeSlot",
+        "title": "时间段",
+        "type": "text",
+        "width": 120
       },
       {
         "key": "vehicleCount",
@@ -58,13 +64,13 @@
         "key": "cargoName",
         "title": "货物名称",
         "type": "text",
-        "width": 150
+        "width": 120
       },
       {
-        "key": "expertName",
+        "key": "expertInfo",
         "title": "应急专家",
         "type": "text",
-        "width": 120
+        "width": 180
       },
       {
         "key": "status",
@@ -72,12 +78,6 @@
         "type": "tag",
         "width": 100,
         "dictKey": "planStatus"
-      },
-      {
-        "key": "approvalComment",
-        "title": "审批意见",
-        "type": "text",
-        "ellipsis": true
       },
       {
         "key": "actions",
@@ -110,6 +110,8 @@
       "cargoCode": "LC001",
       "expertId": "EXP001",
       "expertName": "张安全",
+      "expertPhone": "13800138001",
+      "expertInfo": "张安全/13800138001",
       "expertSnapshot": { "id": "EXP001", "name": "张安全", "phone": "13800138001", "field": "化学品运输" },
       "status": "approved",
       "approvalComment": "审批通过，请按计划执行",
@@ -132,6 +134,8 @@
       "cargoCode": "LS001",
       "expertId": "EXP002",
       "expertName": "李防护",
+      "expertPhone": "13800138002",
+      "expertInfo": "李防护/13800138002",
       "expertSnapshot": { "id": "EXP002", "name": "李防护", "phone": "13800138002", "field": "腐蚀品处理" },
       "status": "pending",
       "approvalComment": "",
@@ -153,6 +157,8 @@
       "cargoCode": "LA001",
       "expertId": "EXP003",
       "expertName": "王应急",
+      "expertPhone": "13800138003",
+      "expertInfo": "王应急/13800138003",
       "expertSnapshot": { "id": "EXP003", "name": "王应急", "phone": "13800138003", "field": "气体泄漏处置" },
       "status": "rejected",
       "approvalComment": "时间段选择不当，请调整至白天",
@@ -175,6 +181,8 @@
       "cargoCode": "XS001",
       "expertId": "EXP001",
       "expertName": "张安全",
+      "expertPhone": "13800138001",
+      "expertInfo": "张安全/13800138001",
       "expertSnapshot": { "id": "EXP001", "name": "张安全", "phone": "13800138001", "field": "化学品运输" },
       "status": "executed",
       "approvalComment": "审批通过",
@@ -198,6 +206,8 @@
       "cargoCode": "YS001",
       "expertId": "EXP002",
       "expertName": "李防护",
+      "expertPhone": "13800138002",
+      "expertInfo": "李防护/13800138002",
       "expertSnapshot": { "id": "EXP002", "name": "李防护", "phone": "13800138002", "field": "腐蚀品处理" },
       "status": "cancelled",
       "approvalComment": "",
@@ -220,6 +230,8 @@
       "cargoCode": "LC001",
       "expertId": "",
       "expertName": "",
+      "expertPhone": "",
+      "expertInfo": "",
       "expertSnapshot": null,
       "status": "draft",
       "approvalComment": "",

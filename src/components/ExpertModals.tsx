@@ -95,7 +95,7 @@ export const ExpertCreateModal: React.FC<CreateModalProps> = ({ visible, onCance
         <Form.Item
           label="手机号"
           name="phone"
-          rules={[{ validator: validatePhone }]}
+          rules={[{ required: true, validator: validatePhone }]}
         >
           <Input placeholder="请输入11位手机号" maxLength={11} />
         </Form.Item>
@@ -103,7 +103,7 @@ export const ExpertCreateModal: React.FC<CreateModalProps> = ({ visible, onCance
         <Form.Item
           label="身份证号"
           name="idCard"
-          rules={[{ validator: validateIdCard }]}
+          rules={[{ required: true, validator: validateIdCard }]}
         >
           <Input placeholder="请输入18位身份证号" maxLength={18} />
         </Form.Item>
@@ -111,29 +111,16 @@ export const ExpertCreateModal: React.FC<CreateModalProps> = ({ visible, onCance
         <Form.Item
           label="专业领域"
           name="field"
-          rules={[{ required: true, message: '请选择专业领域' }]}
         >
-          <Select placeholder="请选择专业领域">
+          <Select 
+            placeholder="请选择专业领域（可多选）" 
+            mode="multiple"
+            allowClear
+          >
             {fieldOptions.map(option => (
               <Option key={option.value} value={option.value}>{option.label}</Option>
             ))}
           </Select>
-        </Form.Item>
-
-        <Form.Item
-          label="所在单位"
-          name="company"
-          rules={[{ required: true, message: '请输入所在单位' }]}
-        >
-          <Input placeholder="请输入所在单位" />
-        </Form.Item>
-
-        <Form.Item
-          label="证书号"
-          name="certificateNo"
-          rules={[{ required: true, message: '请输入证书号' }]}
-        >
-          <Input placeholder="请输入证书号" />
         </Form.Item>
 
         <Form.Item
@@ -234,7 +221,7 @@ export const ExpertEditModal: React.FC<EditModalProps> = ({ visible, record, onC
         <Form.Item
           label="手机号"
           name="phone"
-          rules={[{ validator: validatePhone }]}
+          rules={[{ required: true, validator: validatePhone }]}
         >
           <Input placeholder="请输入11位手机号" maxLength={11} />
         </Form.Item>
@@ -242,7 +229,7 @@ export const ExpertEditModal: React.FC<EditModalProps> = ({ visible, record, onC
         <Form.Item
           label="身份证号"
           name="idCard"
-          rules={[{ validator: validateIdCard }]}
+          rules={[{ required: true, validator: validateIdCard }]}
         >
           <Input placeholder="请输入18位身份证号" maxLength={18} />
         </Form.Item>
@@ -250,29 +237,16 @@ export const ExpertEditModal: React.FC<EditModalProps> = ({ visible, record, onC
         <Form.Item
           label="专业领域"
           name="field"
-          rules={[{ required: true, message: '请选择专业领域' }]}
         >
-          <Select placeholder="请选择专业领域">
+          <Select 
+            placeholder="请选择专业领域（可多选）" 
+            mode="multiple"
+            allowClear
+          >
             {fieldOptions.map(option => (
               <Option key={option.value} value={option.value}>{option.label}</Option>
             ))}
           </Select>
-        </Form.Item>
-
-        <Form.Item
-          label="所在单位"
-          name="company"
-          rules={[{ required: true, message: '请输入所在单位' }]}
-        >
-          <Input placeholder="请输入所在单位" />
-        </Form.Item>
-
-        <Form.Item
-          label="证书号"
-          name="certificateNo"
-          rules={[{ required: true, message: '请输入证书号' }]}
-        >
-          <Input placeholder="请输入证书号" />
         </Form.Item>
 
         <Form.Item
@@ -297,28 +271,29 @@ interface DeleteModalProps {
 export const ExpertDeleteModal: React.FC<DeleteModalProps> = ({ visible, record, onCancel, onConfirm }) => {
   const [loading, setLoading] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setLoading(true);
+    
+    // 模拟删除请求
     setTimeout(() => {
       setLoading(false);
-      message.success('专家已删除');
       onConfirm();
     }, 500);
   };
 
   return (
     <Modal
-      title="删除专家"
+      title="确认删除"
       open={visible}
       onOk={handleConfirm}
       onCancel={onCancel}
       confirmLoading={loading}
-      okText="确认删除"
+      okText="确认"
       cancelText="取消"
       okButtonProps={{ danger: true }}
     >
-      <p>确定要删除专家 <strong>{record?.name}</strong> 吗？</p>
-      <p style={{ color: '#999' }}>删除后该专家将从列表中移除</p>
+      <p>确定要删除专家 "{record?.name}" 吗？</p>
+      <p style={{ color: '#999', fontSize: '12px' }}>删除后不可恢复，请谨慎操作。</p>
     </Modal>
   );
 };
