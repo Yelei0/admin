@@ -679,20 +679,10 @@ const CarrierPlanDetailPage = () => {
           <Button
             type="text"
             onClick={() => handleEdit(record)}
+            disabled={record.status !== 'pending'}
           >
-            编辑
+            修改
           </Button>
-          <Popconfirm
-            title="确认删除"
-            description="确定要删除这条明细吗？"
-            onConfirm={() => handleDelete(record.id)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button type="text" danger>
-              删除
-            </Button>
-          </Popconfirm>
         </Space>
       ),
     },
@@ -844,28 +834,63 @@ const CarrierPlanDetailPage = () => {
   }
 
   const handleNextStep = () => {
-    form.validateFields().then(() => {
-      if (currentStep === 0) {
-        if (!selectedBatchPlan) {
-          message.error('请选择批次计划')
-          return
-        }
-        setCurrentStep(1)
-      } else if (currentStep === 1) {
-        if (vehicleList.length === 0) {
-          message.error('请至少添加一辆车')
-          return
-        }
-        
-        const hasEmptyFields = vehicleList.some(v => !v.headVehicle || !v.trailer || !v.driverId || !v.escortId)
-        if (hasEmptyFields) {
-          message.error('请完善所有车辆信息')
-          return
-        }
-        
-        setIsConfirmModalOpen(true)
+    if (editingRecord) {
+      if (vehicleList.length === 0) {
+        message.error('请至少添加一辆车')
+        return
       }
-    })
+      
+      const hasEmptyFields = vehicleList.some(v => !v.headVehicle || !v.trailer || !v.driverId || !v.escortId)
+      if (hasEmptyFields) {
+        message.error('请完善所有车辆信息')
+        return
+      }
+      
+      // 更新数据
+      const updatedData = data.map(item => {
+        if (item.id === editingRecord.id) {
+          return {
+            ...item,
+            headVehicle: vehicleList[0].headVehicle,
+            trailer: vehicleList[0].trailer,
+            driverId: vehicleList[0].driverId,
+            driverName: vehicleList[0].driverName,
+            driverPhone: vehicleList[0].driverPhone,
+            escortId: vehicleList[0].escortId,
+            escortName: vehicleList[0].escortName,
+            escortPhone: vehicleList[0].escortPhone,
+          }
+        }
+        return item
+      })
+      
+      setData(updatedData)
+      message.success('修改成功')
+      setIsModalOpen(false)
+    } else {
+      form.validateFields().then(() => {
+        if (currentStep === 0) {
+          if (!selectedBatchPlan) {
+            message.error('请选择批次计划')
+            return
+          }
+          setCurrentStep(1)
+        } else if (currentStep === 1) {
+          if (vehicleList.length === 0) {
+            message.error('请至少添加一辆车')
+            return
+          }
+          
+          const hasEmptyFields = vehicleList.some(v => !v.headVehicle || !v.trailer || !v.driverId || !v.escortId)
+          if (hasEmptyFields) {
+            message.error('请完善所有车辆信息')
+            return
+          }
+          
+          setIsConfirmModalOpen(true)
+        }
+      })
+    }
   }
 
   const handlePrevStep = () => {
@@ -995,7 +1020,7 @@ const CarrierPlanDetailPage = () => {
       />
 
       <Modal
-        title={editingRecord ? '编辑计划' : '新增计划'}
+        title={editingRecord ? '修改计划' : '新增计划'}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={[
@@ -1005,73 +1030,22 @@ const CarrierPlanDetailPage = () => {
             </Button>
           ),
           <Button key="next" type="primary" onClick={handleNextStep}>
-            {currentStep === 1 ? '下一步' : '下一步'}
+            {currentStep === 1 ? '确认' : '下一步'}
           </Button>,
         ]}
         width={1000}
       >
-        <Steps current={currentStep} style={{ marginBottom: 24 }}>
-          <Step title="批次信息" />
-          <Step title="车辆信息" />
-          <Step title="确认提交" />
-        </Steps>
-
-        {currentStep === 0 && (
-          <Form
-            form={form}
-            layout="vertical"
-          >
+        {editingRecord ? (
+          <>
             <Divider orientation="left">批次信息</Divider>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  label="托运企业"
-                  name="shipperId"
-                  rules={[{ required: true, message: '请选择托运企业' }]}
-                >
-                  <Select
-                    placeholder="请选择托运企业"
-                    onChange={(value) => {
-                      setSelectedShipper(value)
-                      setSelectedBatchPlan(null)
-                      form.setFieldsValue({ batchPlanId: undefined })
-                    }}
-                  >
-                    {mockShippers.map(shipper => (
-                      <Option key={shipper.id} value={shipper.id}>{shipper.name}</Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  label="批次计划编号"
-                  name="batchPlanId"
-                  rules={[{ required: true, message: '请选择批次计划' }]}
-                >
-                  <Select
-                    placeholder="请选择批次计划"
-                    onChange={handleBatchPlanChange}
-                    disabled={!selectedShipper}
-                  >
-                    {mockBatchPlans.map(plan => {
-                      const availableCount = plan.totalVehicles - plan.usedVehicles
-                      const currentBatchCount = data.filter(d => d.batchPlanId === plan.id && d.id !== editingRecord?.id).length
-                      const canAdd = availableCount - currentBatchCount > 0
-                      return (
-                        <Option key={plan.id} value={plan.id} disabled={!canAdd}>
-                          {plan.planNo} (可添加: {availableCount - currentBatchCount}辆)
-                        </Option>
-                      )
-                    })}
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-
             {selectedBatchPlan && (
               <>
                 <Row gutter={16}>
+                  <Col span={8}>
+                    <Form.Item label="批次计划编号">
+                      <Input value={selectedBatchPlan.planNo} disabled />
+                    </Form.Item>
+                  </Col>
                   <Col span={8}>
                     <Form.Item label="计划日期">
                       <Input value={selectedBatchPlan.planDate} disabled />
@@ -1080,14 +1054,6 @@ const CarrierPlanDetailPage = () => {
                   <Col span={8}>
                     <Form.Item label="时间段">
                       <Input value={selectedBatchPlan.timeRange} disabled />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="批次车数">
-                      <Space>
-                        <Tag color="blue">总数: {selectedBatchPlan.totalVehicles}</Tag>
-                        <Tag color="green">可添加: {selectedBatchPlan.totalVehicles - selectedBatchPlan.usedVehicles - data.filter(d => d.batchPlanId === selectedBatchPlan.id && d.id !== editingRecord?.id).length}</Tag>
-                      </Space>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1105,45 +1071,266 @@ const CarrierPlanDetailPage = () => {
                   </Col>
                 </Row>
 
-                <Divider orientation="left">货物信息</Divider>
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Form.Item
-                      label="货物品类"
-                      name="goodsCategory"
-                      rules={[{ required: true, message: '请选择货物品类' }]}
-                    >
-                      <Select
-                        placeholder="请选择货物品类"
-                        onChange={handleGoodsCategoryChange}
-                        showSearch
-                        optionFilterProp="children"
-                      >
-                        {mockGoodsCategories.map(goods => (
-                          <Option key={goods.category} value={goods.category}>
-                            {goods.category}
-                          </Option>
-                        ))}
-                      </Select>
+                    <Form.Item label="货物品类">
+                      <Input value={selectedBatchPlan.goodsCategory} disabled />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item label="应急处置措施">
                       <Input.TextArea
-                        name="emergencyMeasures"
                         rows={3}
+                        value={selectedBatchPlan.emergencyMeasures}
                         disabled
-                        placeholder="选择货物品类后自动带出"
                       />
                     </Form.Item>
                   </Col>
                 </Row>
               </>
             )}
-          </Form>
-        )}
 
-        {currentStep === 1 && selectedBatchPlan && (
+            <Divider orientation="left">车辆信息</Divider>
+            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4>车辆驾押信息</h4>
+            </div>
+            
+            <List
+              dataSource={vehicleList}
+              renderItem={(vehicle, index) => (
+                <List.Item
+                  actions={[
+                    <Button
+                      key="delete"
+                      danger
+                      type="text"
+                      onClick={() => removeVehicle(vehicle.id)}
+                    >
+                      删除
+                    </Button>
+                  ]}
+                >
+                  <div style={{ width: '100%' }}>
+                    <h5 style={{ marginBottom: 12 }}>车辆 {index + 1}</h5>
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Form.Item
+                          label="车头"
+                          rules={[{ required: true, message: '请输入或选择车头' }]}
+                        >
+                          <AutoComplete
+                            options={headVehicleOptions.map(v => ({ value: v }))}
+                            onSearch={handleHeadVehicleSearch}
+                            placeholder="输入或选择车牌号"
+                            filterOption={false}
+                            value={vehicle.headVehicle}
+                            onChange={(value) => {
+                              const newVehicleList = [...vehicleList]
+                              newVehicleList[index].headVehicle = value
+                              setVehicleList(newVehicleList)
+                            }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item
+                          label="挂车"
+                          rules={[{ required: true, message: '请输入或选择挂车' }]}
+                        >
+                          <AutoComplete
+                            options={trailerOptions.map(v => ({ value: v }))}
+                            onSearch={handleTrailerSearch}
+                            placeholder="输入或选择挂车号"
+                            filterOption={false}
+                            value={vehicle.trailer}
+                            onChange={(value) => {
+                              const newVehicleList = [...vehicleList]
+                              newVehicleList[index].trailer = value
+                              setVehicleList(newVehicleList)
+                            }}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Form.Item
+                          label="驾驶员"
+                          rules={[{ required: true, message: '请选择驾驶员' }]}
+                        >
+                          <Select
+                            placeholder="请选择驾驶员"
+                            value={vehicle.driverId}
+                            onChange={(value) => handleDriverChange(index, value)}
+                          >
+                            {mockDrivers.map(driver => (
+                              <Option key={driver.id} value={driver.id}>
+                                {driver.name} / {driver.phone}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item
+                          label="押运员"
+                          rules={[{ required: true, message: '请选择押运员' }]}
+                        >
+                          <Select
+                            placeholder="请选择押运员"
+                            value={vehicle.escortId}
+                            onChange={(value) => handleEscortChange(index, value)}
+                          >
+                            {mockEscorts.map(escort => (
+                              <Option key={escort.id} value={escort.id}>
+                                {escort.name} / {escort.phone}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </div>
+                </List.Item>
+              )}
+            />
+          </>
+        ) : (
+          <>
+            <Steps current={currentStep} style={{ marginBottom: 24 }}>
+              <Step title="批次信息" />
+              <Step title="车辆信息" />
+              <Step title="确认提交" />
+            </Steps>
+
+            {currentStep === 0 && (
+              <Form
+                form={form}
+                layout="vertical"
+              >
+                <Divider orientation="left">批次信息</Divider>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="托运企业"
+                      name="shipperId"
+                      rules={[{ required: true, message: '请选择托运企业' }]}
+                    >
+                      <Select
+                        placeholder="请选择托运企业"
+                        onChange={(value) => {
+                          setSelectedShipper(value)
+                          setSelectedBatchPlan(null)
+                          form.setFieldsValue({ batchPlanId: undefined })
+                        }}
+                      >
+                        {mockShippers.map(shipper => (
+                          <Option key={shipper.id} value={shipper.id}>{shipper.name}</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="批次计划编号"
+                      name="batchPlanId"
+                      rules={[{ required: true, message: '请选择批次计划' }]}
+                    >
+                      <Select
+                        placeholder="请选择批次计划"
+                        onChange={handleBatchPlanChange}
+                        disabled={!selectedShipper}
+                      >
+                        {mockBatchPlans.map(plan => {
+                          const availableCount = plan.totalVehicles - plan.usedVehicles
+                          const currentBatchCount = data.filter(d => d.batchPlanId === plan.id && d.id !== editingRecord?.id).length
+                          const canAdd = availableCount - currentBatchCount > 0
+                          return (
+                            <Option key={plan.id} value={plan.id} disabled={!canAdd}>
+                              {plan.planNo} (可添加: {availableCount - currentBatchCount}辆)
+                            </Option>
+                          )
+                        })}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                {selectedBatchPlan && (
+                  <>
+                    <Row gutter={16}>
+                      <Col span={8}>
+                        <Form.Item label="计划日期">
+                          <Input value={selectedBatchPlan.planDate} disabled />
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item label="时间段">
+                          <Input value={selectedBatchPlan.timeRange} disabled />
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item label="批次车数">
+                          <Space>
+                            <Tag color="blue">总数: {selectedBatchPlan.totalVehicles}</Tag>
+                            <Tag color="green">可添加: {selectedBatchPlan.totalVehicles - selectedBatchPlan.usedVehicles - data.filter(d => d.batchPlanId === selectedBatchPlan.id && d.id !== editingRecord?.id).length}</Tag>
+                          </Space>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Form.Item label="托运企业">
+                          <Input value={selectedBatchPlan.shipperName} disabled />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item label="承运企业">
+                          <Input value={selectedBatchPlan.carrierName} disabled />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+
+                    <Divider orientation="left">货物信息</Divider>
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Form.Item
+                          label="货物品类"
+                          name="goodsCategory"
+                          rules={[{ required: true, message: '请选择货物品类' }]}
+                        >
+                          <Select
+                            placeholder="请选择货物品类"
+                            onChange={handleGoodsCategoryChange}
+                            showSearch
+                            optionFilterProp="children"
+                          >
+                            {mockGoodsCategories.map(goods => (
+                              <Option key={goods.category} value={goods.category}>
+                                {goods.category}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item label="应急处置措施">
+                          <Input.TextArea
+                            name="emergencyMeasures"
+                            rows={3}
+                            disabled
+                            placeholder="选择货物品类后自动带出"
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </>
+                )}
+              </Form>
+            )}
+
+            {currentStep === 1 && selectedBatchPlan && (
           <div>
             <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h4>车辆驾押信息</h4>
