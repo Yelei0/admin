@@ -1099,16 +1099,7 @@ const CarrierPlanDetailPage = () => {
               dataSource={vehicleList}
               renderItem={(vehicle, index) => (
                 <List.Item
-                  actions={[
-                    <Button
-                      key="delete"
-                      danger
-                      type="text"
-                      onClick={() => removeVehicle(vehicle.id)}
-                    >
-                      删除
-                    </Button>
-                  ]}
+                  actions={[]}
                 >
                   <div style={{ width: '100%' }}>
                     <h5 style={{ marginBottom: 12 }}>车辆 {index + 1}</h5>
@@ -1331,134 +1322,136 @@ const CarrierPlanDetailPage = () => {
             )}
 
             {currentStep === 1 && selectedBatchPlan && (
-          <div>
-            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h4>车辆驾押信息</h4>
-              <Button
-                type="dashed"
-                icon={<PlusOutlined />}
-                onClick={addVehicle}
-              >
-                添加车辆
-              </Button>
-            </div>
-            
-            <List
-              dataSource={vehicleList}
-              renderItem={(vehicle, index) => (
-                <List.Item
-                  actions={[
-                    <Button
-                      key="delete"
-                      danger
-                      type="text"
-                      onClick={() => removeVehicle(vehicle.id)}
+              <div>
+                <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h4>车辆驾押信息</h4>
+                  <Button
+                    type="dashed"
+                    icon={<PlusOutlined />}
+                    onClick={addVehicle}
+                  >
+                    添加车辆
+                  </Button>
+                </div>
+                
+                <List
+                  dataSource={vehicleList}
+                  renderItem={(vehicle, index) => (
+                    <List.Item
+                      actions={[
+                        <Button
+                          key="delete"
+                          danger
+                          type="text"
+                          onClick={() => removeVehicle(vehicle.id)}
+                        >
+                          删除
+                        </Button>
+                      ]}
                     >
-                      删除
-                    </Button>
-                  ]}
-                >
-                  <div style={{ width: '100%' }}>
-                    <h5 style={{ marginBottom: 12 }}>车辆 {index + 1}</h5>
-                    <Row gutter={16}>
-                      <Col span={12}>
-                        <Form.Item
-                          label="车头"
-                          rules={[{ required: true, message: '请输入或选择车头' }]}
-                        >
-                          <AutoComplete
-                            options={headVehicleOptions.map(v => ({ value: v }))}
-                            onSearch={handleHeadVehicleSearch}
-                            placeholder="输入或选择车牌号"
-                            filterOption={false}
-                            value={vehicle.headVehicle}
-                            onChange={(value) => {
-                              const newVehicleList = [...vehicleList]
-                              newVehicleList[index].headVehicle = value
-                              setVehicleList(newVehicleList)
-                            }}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={12}>
-                        <Form.Item
-                          label="挂车"
-                          rules={[{ required: true, message: '请输入或选择挂车' }]}
-                        >
-                          <AutoComplete
-                            options={trailerOptions.map(v => ({ value: v }))}
-                            onSearch={handleTrailerSearch}
-                            placeholder="输入或选择挂车牌号"
-                            filterOption={false}
-                            value={vehicle.trailer}
-                            onChange={(value) => {
-                              const newVehicleList = [...vehicleList]
-                              newVehicleList[index].trailer = value
-                              setVehicleList(newVehicleList)
-                            }}
-                          />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row gutter={16}>
-                      <Col span={12}>
-                        <Form.Item
-                          label="驾驶员"
-                          rules={[{ required: true, message: '请选择驾驶员' }]}
-                        >
-                          <Select
-                            placeholder="请选择驾驶员"
-                            value={vehicle.driverId}
-                            onChange={(value) => handleDriverChange(index, value)}
-                            showSearch
-                            optionFilterProp="children"
-                          >
-                            {mockDrivers.map(driver => (
-                              <Option key={driver.id} value={driver.id}>
-                                {driver.name} / {driver.phone}
-                              </Option>
-                            ))}
-                          </Select>
-                        </Form.Item>
-                      </Col>
-                      <Col span={12}>
-                        <Form.Item label="驾驶员手机号">
-                          <Input value={vehicle.driverPhone} disabled placeholder="选择驾驶员后自动带出" />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row gutter={16}>
-                      <Col span={12}>
-                        <Form.Item
-                          label="押运员"
-                          rules={[{ required: true, message: '请选择押运员' }]}
-                        >
-                          <Select
-                            placeholder="请选择押运员"
-                            value={vehicle.escortId}
-                            onChange={(value) => handleEscortChange(index, value)}
-                            showSearch
-                            optionFilterProp="children"
-                          >
-                            {mockEscorts.map(escort => (
-                              <Option key={escort.id} value={escort.id}>
-                                {escort.name} / {escort.phone}
-                              </Option>
-                            ))}
-                          </Select>
-                        </Form.Item>
-                      </Col>
-                      <Col span={12}>
-                        <Form.Item label="押运员手机号">
-                          <Input value={vehicle.escortPhone} disabled placeholder="选择押运员后自动带出" />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </div>
-                </List.Item>
-              )}
-            />
-          </div>
+                      <div style={{ width: '100%' }}>
+                        <h5 style={{ marginBottom: 12 }}>车辆 {index + 1}</h5>
+                        <Row gutter={16}>
+                          <Col span={12}>
+                            <Form.Item
+                              label="车头"
+                              rules={[{ required: true, message: '请输入或选择车头' }]}
+                            >
+                              <AutoComplete
+                                options={headVehicleOptions.map(v => ({ value: v }))}
+                                onSearch={handleHeadVehicleSearch}
+                                placeholder="输入或选择车牌号"
+                                filterOption={false}
+                                value={vehicle.headVehicle}
+                                onChange={(value) => {
+                                  const newVehicleList = [...vehicleList]
+                                  newVehicleList[index].headVehicle = value
+                                  setVehicleList(newVehicleList)
+                                }}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col span={12}>
+                            <Form.Item
+                              label="挂车"
+                              rules={[{ required: true, message: '请输入或选择挂车' }]}
+                            >
+                              <AutoComplete
+                                options={trailerOptions.map(v => ({ value: v }))}
+                                onSearch={handleTrailerSearch}
+                                placeholder="输入或选择挂车牌号"
+                                filterOption={false}
+                                value={vehicle.trailer}
+                                onChange={(value) => {
+                                  const newVehicleList = [...vehicleList]
+                                  newVehicleList[index].trailer = value
+                                  setVehicleList(newVehicleList)
+                                }}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row gutter={16}>
+                          <Col span={12}>
+                            <Form.Item
+                              label="驾驶员"
+                              rules={[{ required: true, message: '请选择驾驶员' }]}
+                            >
+                              <Select
+                                placeholder="请选择驾驶员"
+                                value={vehicle.driverId}
+                                onChange={(value) => handleDriverChange(index, value)}
+                                showSearch
+                                optionFilterProp="children"
+                              >
+                                {mockDrivers.map(driver => (
+                                  <Option key={driver.id} value={driver.id}>
+                                    {driver.name} / {driver.phone}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                          <Col span={12}>
+                            <Form.Item label="驾驶员手机号">
+                              <Input value={vehicle.driverPhone} disabled placeholder="选择驾驶员后自动带出" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row gutter={16}>
+                          <Col span={12}>
+                            <Form.Item
+                              label="押运员"
+                              rules={[{ required: true, message: '请选择押运员' }]}
+                            >
+                              <Select
+                                placeholder="请选择押运员"
+                                value={vehicle.escortId}
+                                onChange={(value) => handleEscortChange(index, value)}
+                                showSearch
+                                optionFilterProp="children"
+                              >
+                                {mockEscorts.map(escort => (
+                                  <Option key={escort.id} value={escort.id}>
+                                    {escort.name} / {escort.phone}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                          <Col span={12}>
+                            <Form.Item label="押运员手机号">
+                              <Input value={vehicle.escortPhone} disabled placeholder="选择押运员后自动带出" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              </div>
+            )}
+          </>
         )}
       </Modal>
 
