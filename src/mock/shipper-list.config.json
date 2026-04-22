@@ -1,0 +1,196 @@
+{
+  "pageMeta": {
+    "title": "托运企业列表",
+    "description": "管理所有托运企业信息，包括企业基本信息、联系人、账号状态等"
+  },
+  "searchConfig": [
+    {
+      "key": "companyName",
+      "label": "企业名称",
+      "type": "input",
+      "placeholder": "请输入企业名称，支持模糊搜索"
+    },
+    {
+      "key": "creditCode",
+      "label": "统一社会信用代码",
+      "type": "input",
+      "placeholder": "请输入18位统一社会信用代码"
+    },
+    {
+      "key": "contactPhone",
+      "label": "联系人手机号",
+      "type": "input",
+      "placeholder": "请输入11位手机号"
+    },
+    {
+      "key": "accountStatus",
+      "label": "账号状态",
+      "type": "select",
+      "placeholder": "请选择账号状态",
+      "options": [
+        { "label": "全部", "value": "all" },
+        { "label": "启用", "value": "enabled" },
+        { "label": "禁用", "value": "disabled" }
+      ]
+    }
+  ],
+  "tableConfig": {
+    "rowKey": "id",
+    "columns": [
+      {
+        "key": "companyName",
+        "title": "企业名称",
+        "type": "text",
+        "width": 200,
+        "ellipsis": true
+      },
+      {
+        "key": "creditCode",
+        "title": "统一社会信用代码",
+        "type": "text",
+        "width": 180
+      },
+      {
+        "key": "contactName",
+        "title": "联系人姓名",
+        "type": "text",
+        "width": 120
+      },
+      {
+        "key": "contactPhone",
+        "title": "联系人手机号",
+        "type": "text",
+        "width": 140
+      },
+      {
+        "key": "accountStatus",
+        "title": "账号状态",
+        "type": "tag",
+        "width": 100,
+        "align": "center",
+        "dictKey": "accountStatusDict"
+      },
+      {
+        "key": "createTime",
+        "title": "创建时间",
+        "type": "datetime",
+        "width": 180
+      },
+      {
+        "key": "actions",
+        "title": "操作",
+        "type": "actions",
+        "width": 280,
+        "fixed": "right",
+        "align": "center"
+      }
+    ],
+    "dicts": {
+      "accountStatusDict": {
+        "enabled": { "label": "启用", "color": "green", "variant": "filled" },
+        "disabled": { "label": "禁用", "color": "red", "variant": "filled" }
+      }
+    }
+  },
+  "mockData": [
+    {
+      "id": "SHP20240101001",
+      "companyName": "山东危化品运输有限公司",
+      "creditCode": "91370100MA3C5L8X3C",
+      "contactName": "张经理",
+      "contactPhone": "13800138001",
+      "accountStatus": "enabled",
+      "createTime": "2024-01-01T10:00:00",
+      "address": "山东省济南市高新区经十路123号",
+      "creator": "admin"
+    },
+    {
+      "id": "SHP20240101002",
+      "companyName": "江苏危险品物流集团",
+      "creditCode": "91320000MA1M9Y2B5E",
+      "contactName": "李主任",
+      "contactPhone": "13800138002",
+      "accountStatus": "enabled",
+      "createTime": "2024-01-02T11:30:00",
+      "address": "江苏省南京市建邺区江东中路456号",
+      "creator": "admin"
+    },
+    {
+      "id": "SHP20240101003",
+      "companyName": "浙江化工运输股份有限公司",
+      "creditCode": "91330000MA27U1K88J",
+      "contactName": "王总",
+      "contactPhone": "13800138003",
+      "accountStatus": "disabled",
+      "createTime": "2024-01-03T14:20:00",
+      "address": "浙江省杭州市萧山区建设三路789号",
+      "creator": "admin"
+    },
+    {
+      "id": "SHP20240102001",
+      "companyName": "上海危险化学品运输公司",
+      "creditCode": "91310100MA1FP5N23L",
+      "contactName": "赵经理",
+      "contactPhone": "13800138004",
+      "accountStatus": "enabled",
+      "createTime": "2024-01-04T09:15:00",
+      "address": "上海市浦东新区临港新城环湖西一路321号",
+      "creator": "admin"
+    },
+    {
+      "id": "SHP20240102002",
+      "companyName": "安徽危化物流有限公司",
+      "creditCode": "91340100MA2N8W6P9K",
+      "contactName": "钱主任",
+      "contactPhone": "13800138005",
+      "accountStatus": "enabled",
+      "createTime": "2024-01-05T10:45:00",
+      "address": "安徽省合肥市包河区繁华大道654号",
+      "creator": "admin"
+    },
+    {
+      "id": "SHP20240102003",
+      "companyName": "福建危险品运输集团",
+      "creditCode": "91350000MA31Q2L44E",
+      "contactName": "孙经理",
+      "contactPhone": "13800138006",
+      "accountStatus": "disabled",
+      "createTime": "2024-01-06T16:30:00",
+      "address": "福建省福州市仓山区金山大道987号",
+      "creator": "admin"
+    },
+    {
+      "id": "SHP20240103001",
+      "companyName": "广东化工物流股份有限公司",
+      "creditCode": "91440000MA4W5U8B2A",
+      "contactName": "周总",
+      "contactPhone": "13800138007",
+      "accountStatus": "enabled",
+      "createTime": "2024-01-07T11:20:00",
+      "address": "广东省广州市黄埔区开发大道147号",
+      "creator": "admin"
+    },
+    {
+      "id": "SHP20240103002",
+      "companyName": "深圳危化运输有限公司",
+      "creditCode": "91440300MA5G8K3N7H",
+      "contactName": "吴经理",
+      "contactPhone": "13800138008",
+      "accountStatus": "enabled",
+      "createTime": "2024-01-08T14:40:00",
+      "address": "广东省深圳市宝安区西乡大道258号",
+      "creator": "admin"
+    }
+  ],
+  "actions": {
+    "row": ["detail", "edit", "toggleStatus", "documents"],
+    "batch": [],
+    "global": ["create"]
+  },
+  "pagination": {
+    "defaultPageSize": 20,
+    "showSizeChanger": true,
+    "showTotal": true,
+    "pageSizeOptions": [10, 20, 50, 100]
+  }
+}
