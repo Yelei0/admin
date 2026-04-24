@@ -1337,7 +1337,7 @@ const CarrierPlanDetailPage = () => {
                         onChange={handleBatchPlanChange}
                         disabled={!selectedShipper}
                       >
-                        {mockBatchPlans.map(plan => {
+                        {mockBatchPlans.map((plan: BatchPlan) => {
                           const availableCount = plan.totalVehicles - plan.usedVehicles
                           const currentBatchCount = data.filter(d => d.batchPlanId === plan.id && d.id !== editingRecord?.id).length
                           const canAdd = availableCount - currentBatchCount > 0

@@ -9,7 +9,7 @@ import {
   LogoutOutlined,
   LockOutlined
 } from '@ant-design/icons'
-import type { MenuProps, TabsProps } from 'antd'
+import type { MenuProps } from 'antd'
 import { useEffect } from 'react'
 import { useTabsStore } from './store/tabsStore'
 import AppRoutes from './router/index'

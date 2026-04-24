@@ -33,13 +33,6 @@ const mockGoodsCategories = [
   },
 ]
 
-// 模拟承运企业数据
-const mockCarriers = [
-  { id: '1', name: '危险品运输集团' },
-  { id: '2', name: '安全运输有限公司' },
-  { id: '3', name: '恒通物流集团' },
-]
-
 // 押运批次接口
 interface EscortBatch {
   id: string

@@ -10,7 +10,6 @@ import {
   Select,
   Badge,
   Tag,
-  Modal,
 } from 'antd'
 
 type VehicleStatus = 'pending' | 'numbered'
