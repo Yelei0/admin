@@ -530,7 +530,7 @@ const CarrierPlanDetailPage = () => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const [searchForm] = Form.useForm()
-  const [data, setData] = useState<PlanDetail[]>(initialMockData)
+  const [data, setData] = useState<any[]>(initialMockData)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRecord, setEditingRecord] = useState<PlanDetail | null>(null)
   const [selectedBatchPlan, setSelectedBatchPlan] = useState<BatchPlan | null>(null)
@@ -1339,7 +1339,14 @@ const CarrierPlanDetailPage = () => {
                       >
                         {mockBatchPlans.map((plan: BatchPlan) => {
                           const availableCount = plan.totalVehicles - plan.usedVehicles
-                          const currentBatchCount = data.filter(d => d.batchPlanId === plan.id && d.id !== editingRecord?.id).length
+                          let currentBatchCount = 0
+                          const editingId = (editingRecord as PlanDetail | null)?.id
+                          for (const item of data) {
+                            const d = item as any
+                            if (d.batchPlanId === plan.id && d.id !== editingId) {
+                              currentBatchCount++
+                            }
+                          }
                           const canAdd = availableCount - currentBatchCount > 0
                           return (
                             <Option key={plan.id} value={plan.id} disabled={!canAdd}>
@@ -1371,7 +1378,17 @@ const CarrierPlanDetailPage = () => {
                             {selectedBatchPlan ? (
                               <>
                                 <Tag color="blue">总数: {selectedBatchPlan.totalVehicles}</Tag>
-                                <Tag color="green">可添加: {selectedBatchPlan.totalVehicles - selectedBatchPlan.usedVehicles - data.filter(d => d.batchPlanId === selectedBatchPlan.id && d.id !== editingRecord?.id).length}</Tag>
+                                <Tag color="green">可添加: {selectedBatchPlan.totalVehicles - selectedBatchPlan.usedVehicles - (() => {
+                                  let count = 0;
+                                  const editingId = (editingRecord as PlanDetail | null)?.id;
+                                  for (const item of data) {
+                                    const d = item as any;
+                                    if (d.batchPlanId === selectedBatchPlan.id && d.id !== editingId) {
+                                      count++;
+                                    }
+                                  }
+                                  return count;
+                                })()}</Tag>
                               </>
                             ) : (
                               <Tag color="default">请选择批次计划</Tag>

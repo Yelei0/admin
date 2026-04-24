@@ -10,7 +10,6 @@ import {
   message,
   Modal,
 } from 'antd'
-import { PlusOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 
 // 货物类别及应急措施
@@ -33,37 +32,7 @@ const mockGoodsCategories = [
   },
 ]
 
-// 批次计划接口
-interface BatchPlan {
-  id: string
-  planNo: string
-  planDate: string
-  timeRange: string
-  goodsCategory: string
-  emergencyMeasures: string
-  totalVehicles: number
-  usedVehicles: number
-  shipperId: string
-  shipperName: string
-  carrierId: string
-  carrierName: string
-}
 
-// 驾驶员接口
-interface Driver {
-  id: string
-  name: string
-  phone: string
-  licenseNo: string
-}
-
-// 押运员接口
-interface Escort {
-  id: string
-  name: string
-  phone: string
-  certificateNo: string
-}
 
 // 计划明细接口
 interface PlanDetail {
@@ -113,50 +82,7 @@ interface PlanDetail {
 }
 
 // 模拟批次计划数据
-const mockBatchPlans: BatchPlan[] = [
-  {
-    id: '1',
-    planNo: 'PC20240101001',
-    planDate: '2024-01-15',
-    timeRange: '08:00-12:00',
-    goodsCategory: '液化石油气',
-    emergencyMeasures: mockGoodsCategories[0].measures,
-    totalVehicles: 5,
-    usedVehicles: 2,
-    shipperId: '1',
-    shipperName: '中石化销售有限公司',
-    carrierId: '1',
-    carrierName: '危险品运输集团',
-  },
-  {
-    id: '2',
-    planNo: 'PC20240101002',
-    planDate: '2024-01-16',
-    timeRange: '14:00-18:00',
-    goodsCategory: '硫酸',
-    emergencyMeasures: mockGoodsCategories[1].measures,
-    totalVehicles: 3,
-    usedVehicles: 0,
-    shipperId: '2',
-    shipperName: '中石油运输公司',
-    carrierId: '2',
-    carrierName: '安全运输有限公司',
-  },
-  {
-    id: '3',
-    planNo: 'PC20240102001',
-    planDate: '2024-01-20',
-    timeRange: '09:00-17:00',
-    goodsCategory: '柴油',
-    emergencyMeasures: mockGoodsCategories[3].measures,
-    totalVehicles: 8,
-    usedVehicles: 3,
-    shipperId: '3',
-    shipperName: '恒力石化有限公司',
-    carrierId: '3',
-    carrierName: '恒通物流集团',
-  },
-]
+
 
 // 初始模拟数据
 const initialMockData: PlanDetail[] = [
@@ -561,7 +487,7 @@ const PlanApprovalPage = () => {
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (status: 'pending' | 'rejected' | 'waiting_assemble' | 'waiting_training' | 'waiting_self_check' | 'self_check_waiting_confirm' | 'waiting_forming' | 'waiting_bridge_approval' | 'escorting' | 'completed' | 'cancelled', record: PlanDetail) => {
+      render: (status: 'pending' | 'rejected' | 'waiting_assemble' | 'waiting_training' | 'waiting_self_check' | 'self_check_waiting_confirm' | 'self_check_rejected' | 'waiting_forming' | 'waiting_bridge_approval' | 'escorting' | 'completed' | 'cancelled', record: PlanDetail) => {
         const statusMap = {
           pending: { color: 'orange', text: '待审批' },
           rejected: { color: 'red', text: '已驳回' },

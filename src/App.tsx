@@ -371,34 +371,25 @@ const TabHeader = () => {
   }))
 
   return (
-    <div style={{
-      borderBottom: '1px solid #f0f0f0',
-      background: '#fff',
-    }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f0f0f0', background: '#fff' }}>
       <Tabs
         activeKey={activeKey}
-        items={tabItems as any}
-        onTabClick={handleTabClick}
+        items={tabItems}
+        onChange={handleTabClick}
         style={{
           margin: 0,
           height: 40,
+          flex: 1
         }}
-        tabBarStyle={{
-          height: 40,
-          lineHeight: '40px',
-        }}
-        type="card"
-        extra={
-          <Button
-            type="text"
-            icon={<ReloadOutlined />}
-            onClick={closeAll}
-            style={{ marginRight: 16 }}
-          >
-            关闭全部
-          </Button>
-        }
       />
+      <Button
+        type="text"
+        icon={<ReloadOutlined />}
+        onClick={closeAll}
+        style={{ marginRight: 16, height: 40, lineHeight: '40px' }}
+      >
+        关闭全部
+      </Button>
     </div>
   )
 }

@@ -345,15 +345,18 @@ const EscortBatchPage = () => {
             action="/api/upload"
             headers={{ authorization: 'authorization-text' }}
             showUploadList={false}
-            onSuccess={() => {
-              message.success('上传成功')
-              setData(data.map(item =>
-                item.id === record.id
-                  ? { ...item, summaryFile: '已上传' }
-                  : item
-              ))
+            onChange={(info) => {
+              if (info.file.status === 'done') {
+                message.success('上传成功')
+                setData(data.map(item =>
+                  item.id === record.id
+                    ? { ...item, summaryFile: '已上传' }
+                    : item
+                ))
+              } else if (info.file.status === 'error') {
+                message.error('上传失败')
+              }
             }}
-            onError={() => message.error('上传失败')}
           >
             <Button icon={<UploadOutlined />} type="text">
               上传总结

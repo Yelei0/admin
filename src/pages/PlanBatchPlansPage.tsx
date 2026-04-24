@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   Card,
   Table,
@@ -34,19 +34,7 @@ const mockGoodsCategories = [
   },
 ]
 
-// 模拟托运企业数据
-const mockShippers = [
-  { id: '1', name: '中石化销售有限公司' },
-  { id: '2', name: '中石油运输公司' },
-  { id: '3', name: '恒力石化有限公司' },
-]
 
-// 模拟承运企业数据
-const mockCarriers = [
-  { id: '1', name: '危险品运输集团' },
-  { id: '2', name: '安全运输有限公司' },
-  { id: '3', name: '恒通物流集团' },
-]
 
 // 批次计划状态类型
 type BatchPlanStatus = 'pending' | 'approved' | 'rejected' | 'dispatching' | 'dispatch_completed' | 'cancelled'
