@@ -346,12 +346,12 @@ const EscortBatchPage = () => {
             headers={{ authorization: 'authorization-text' }}
             showUploadList={false}
             onSuccess={() => {
-              message.success('上传成功');
+              message.success('上传成功')
               setData(data.map(item =>
                 item.id === record.id
                   ? { ...item, summaryFile: '已上传' }
                   : item
-              ));
+              ))
             }}
             onError={() => message.error('上传失败')}
           >

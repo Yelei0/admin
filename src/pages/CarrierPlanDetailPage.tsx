@@ -1368,8 +1368,14 @@ const CarrierPlanDetailPage = () => {
                       <Col span={8}>
                         <Form.Item label="批次车数">
                           <Space>
-                            <Tag color="blue">总数: {selectedBatchPlan.totalVehicles}</Tag>
-                            <Tag color="green">可添加: {selectedBatchPlan.totalVehicles - selectedBatchPlan.usedVehicles - data.filter(d => d.batchPlanId === selectedBatchPlan.id && d.id !== editingRecord?.id).length}</Tag>
+                            {selectedBatchPlan ? (
+                              <>
+                                <Tag color="blue">总数: {selectedBatchPlan.totalVehicles}</Tag>
+                                <Tag color="green">可添加: {selectedBatchPlan.totalVehicles - selectedBatchPlan.usedVehicles - data.filter(d => d.batchPlanId === selectedBatchPlan.id && d.id !== editingRecord?.id).length}</Tag>
+                              </>
+                            ) : (
+                              <Tag color="default">请选择批次计划</Tag>
+                            )}
                           </Space>
                         </Form.Item>
                       </Col>

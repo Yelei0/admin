@@ -377,7 +377,7 @@ const TabHeader = () => {
     }}>
       <Tabs
         activeKey={activeKey}
-        items={tabItems}
+        items={tabItems as any}
         onTabClick={handleTabClick}
         style={{
           margin: 0,
