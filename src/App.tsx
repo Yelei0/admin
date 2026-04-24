@@ -5,7 +5,6 @@ import {
   UserOutlined,
   DownOutlined,
   ReloadOutlined,
-  CloseOutlined,
   CloseCircleOutlined,
   LogoutOutlined,
   LockOutlined
@@ -345,7 +344,7 @@ const TabHeader = () => {
     refreshTab(key)
   }
 
-  const tabItems: TabsProps['items'] = tabs.map(tab => ({
+  const tabItems = tabs.map(tab => ({
     key: tab.key,
     label: (
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

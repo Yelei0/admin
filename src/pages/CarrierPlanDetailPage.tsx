@@ -8,7 +8,6 @@ import {
   Input,
   Select,
   Space,
-  Popconfirm,
   message,
   Row,
   Col,
@@ -822,11 +821,6 @@ const CarrierPlanDetailPage = () => {
     setIsModalOpen(true)
   }
 
-  const handleDelete = (id: string) => {
-    setData(data.filter(item => item.id !== id))
-    message.success('删除成功')
-  }
-
   const handleCancel = (id: string) => {
     setData(data.map(item => 
       item.id === id 
@@ -1006,6 +1000,7 @@ const CarrierPlanDetailPage = () => {
     
     const newRecords: PlanDetail[] = vehicleList.map(v => ({
       id: Date.now().toString() + Math.random(),
+      planDetailNo: `MX${Date.now()}${Math.random().toString().slice(2, 6)}`,
       batchPlanId: selectedBatchPlan.id,
       batchPlanNo: selectedBatchPlan.planNo,
       planDate: selectedBatchPlan.planDate,

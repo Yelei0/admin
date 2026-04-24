@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   Card,
   Table,
@@ -10,7 +10,6 @@ import {
   Modal,
   Descriptions,
   Upload,
-  Tooltip,
 } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 
@@ -32,13 +31,6 @@ const mockGoodsCategories = [
     category: '柴油',
     measures: '远离火源，使用防爆设备。泄漏时用砂土吸收，收集处理。',
   },
-]
-
-// 模拟托运企业数据
-const mockShippers = [
-  { id: '1', name: '中石化销售有限公司' },
-  { id: '2', name: '中石油运输公司' },
-  { id: '3', name: '恒力石化有限公司' },
 ]
 
 // 模拟承运企业数据
