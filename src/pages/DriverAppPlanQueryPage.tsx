@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Card,
   Tabs,
-  Badge,
   Button,
   message,
 } from 'antd'
@@ -88,19 +88,20 @@ const historicalPlans: PlanInfo[] = [
 
 const DriverAppPlanQueryPage = () => {
   const [activeTab, setActiveTab] = useState('current')
+  const navigate = useNavigate()
 
-  const getStatusColor = (statusKey: string) => {
-    const statusMap: Record<string, string> = {
-      waiting_gather: 'default',
-      gathered: 'blue',
-      escorting: 'orange',
-      crossed_bridge: 'cyan',
-      completed: 'green',
-      abnormal: 'red',
-      waiting_training: 'purple',
-      waiting_self_check: 'geekblue',
+  const getStatusStyle = (statusKey: string) => {
+    const statusMap: Record<string, { bg: string; text: string }> = {
+      waiting_gather: { bg: '#f0f0f0', text: '#666' },
+      gathered: { bg: '#e6f7ff', text: '#1890ff' },
+      escorting: { bg: '#fff7e6', text: '#fa8c16' },
+      crossed_bridge: { bg: '#e6fffb', text: '#13c2c2' },
+      completed: { bg: '#f6ffed', text: '#52c41a' },
+      abnormal: { bg: '#fff2f0', text: '#ff4d4f' },
+      waiting_training: { bg: '#f9f0ff', text: '#722ed1' },
+      waiting_self_check: { bg: '#e6f7ff', text: '#1890ff' },
     }
-    return statusMap[statusKey] || 'default'
+    return statusMap[statusKey] || { bg: '#f0f0f0', text: '#666' }
   }
 
   const handleTraining = (plan: PlanInfo) => {
@@ -109,6 +110,7 @@ const DriverAppPlanQueryPage = () => {
 
   const handleSelfCheck = (plan: PlanInfo) => {
     message.success(`开始自查 - 运单: ${plan.waybillNumber}`)
+    navigate('/driver-app/self-check')
   }
 
   return (
@@ -158,102 +160,105 @@ const DriverAppPlanQueryPage = () => {
         </div>
 
         <div style={{ padding: '0 16px', height: 580, overflowY: 'auto' }}>
-          {(activeTab === 'current' ? currentPlans : historicalPlans).map(plan => (
-            <div
-              key={plan.id}
-              style={{
-                backgroundColor: '#fff',
-                marginBottom: 12,
-                borderRadius: 12,
-                padding: 16,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                border: '1px solid #f0f0f0',
-                transition: 'all 0.3s ease',
-                transform: 'translateY(0)',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-                },
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 16, fontWeight: 600, color: '#1a1a1a', marginBottom: 4 }}>
-                    运单编号: {plan.waybillNumber}
+          {(activeTab === 'current' ? currentPlans : historicalPlans).map(plan => {
+            const statusStyle = getStatusStyle(plan.statusKey)
+            return (
+              <div
+                key={plan.id}
+                style={{
+                  backgroundColor: '#fff',
+                  marginBottom: 12,
+                  borderRadius: 12,
+                  padding: 16,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                  border: '1px solid #f0f0f0',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 16, fontWeight: 600, color: '#1a1a1a', marginBottom: 4 }}>
+                      运单编号: {plan.waybillNumber}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#999' }}>
+                      {plan.shipperCompany}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 12, color: '#999' }}>
-                    {plan.shipperCompany}
-                  </div>
-                </div>
-                <Badge
-                  status={getStatusColor(plan.statusKey) as any}
-                  text={plan.status}
-                  style={{ fontSize: 12, padding: '2px 8px' }}
-                />
-              </div>
-
-              <div style={{ height: 1, backgroundColor: '#f5f5f5', margin: '12px 0' }} />
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 13, marginBottom: 16 }}>
-                <div>
-                  <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>驾驶员</div>
-                  <div style={{ color: '#333', fontWeight: 500 }}>{plan.driver}</div>
-                </div>
-                <div>
-                  <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>押运员</div>
-                  <div style={{ color: '#333', fontWeight: 500 }}>{plan.escort}</div>
-                </div>
-                <div>
-                  <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>主车</div>
-                  <div style={{ color: '#333', fontWeight: 500 }}>{plan.mainVehicle}</div>
-                </div>
-                <div>
-                  <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>挂车</div>
-                  <div style={{ color: '#333', fontWeight: 500 }}>{plan.trailer}</div>
-                </div>
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>货物类型</div>
                   <div style={{
-                    display: 'inline-block',
-                    color: '#fff',
-                    fontSize: 11,
-                    fontWeight: 500,
-                    backgroundColor: plan.goodsType === '液化石油气' ? '#ff6b6b' :
-                                   plan.goodsType === '汽油' ? '#ffa94d' : '#69db7c',
                     padding: '4px 12px',
                     borderRadius: 12,
+                    backgroundColor: statusStyle.bg,
+                    color: statusStyle.text,
+                    fontSize: 12,
+                    fontWeight: 500,
                   }}>
-                    {plan.goodsType}
+                    {plan.status}
                   </div>
                 </div>
-              </div>
 
-              {activeTab === 'current' && (
-                <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
-                  {plan.statusKey === 'waiting_training' && (
-                    <Button
-                      type="primary"
-                      block
-                      onClick={() => handleTraining(plan)}
-                      style={{ flex: 1, height: 40, fontSize: 14 }}
-                    >
-                      培训
-                    </Button>
-                  )}
-                  {plan.statusKey === 'waiting_self_check' && (
-                    <Button
-                      type="primary"
-                      block
-                      onClick={() => handleSelfCheck(plan)}
-                      style={{ flex: 1, height: 40, fontSize: 14 }}
-                    >
-                      自查
-                    </Button>
-                  )}
+                <div style={{ height: 1, backgroundColor: '#f5f5f5', margin: '12px 0' }} />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 13, marginBottom: 16 }}>
+                  <div>
+                    <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>驾驶员</div>
+                    <div style={{ color: '#333', fontWeight: 500 }}>{plan.driver}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>押运员</div>
+                    <div style={{ color: '#333', fontWeight: 500 }}>{plan.escort}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>主车</div>
+                    <div style={{ color: '#333', fontWeight: 500 }}>{plan.mainVehicle}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>挂车</div>
+                    <div style={{ color: '#333', fontWeight: 500 }}>{plan.trailer}</div>
+                  </div>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <div style={{ color: '#666', marginBottom: 4, fontSize: 12 }}>货物类型</div>
+                    <div style={{
+                      display: 'inline-block',
+                      color: '#fff',
+                      fontSize: 11,
+                      fontWeight: 500,
+                      backgroundColor: plan.goodsType === '液化石油气' ? '#ff6b6b' :
+                                     plan.goodsType === '汽油' ? '#ffa94d' : '#69db7c',
+                      padding: '4px 12px',
+                      borderRadius: 12,
+                    }}>
+                      {plan.goodsType}
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {activeTab === 'current' && (
+                  <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
+                    {plan.statusKey === 'waiting_training' && (
+                      <Button
+                        type="primary"
+                        block
+                        onClick={() => handleTraining(plan)}
+                        style={{ flex: 1, height: 40, fontSize: 14 }}
+                      >
+                        培训
+                      </Button>
+                    )}
+                    {plan.statusKey === 'waiting_self_check' && (
+                      <Button
+                        type="primary"
+                        block
+                        onClick={() => handleSelfCheck(plan)}
+                        style={{ flex: 1, height: 40, fontSize: 14 }}
+                      >
+                        自查
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
 
           {(activeTab === 'current' ? currentPlans : historicalPlans).length === 0 && (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: '#999' }}>

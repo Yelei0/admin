@@ -32,12 +32,17 @@ const routeConfig = [
   { path: '/escort-vehicles', label: '押运车辆维护' },
   { path: '/escort-personnel', label: '押运人员维护' },
   { path: '/formation-management', label: '编队管理' },
+  { path: '/bridge-approval', label: '上桥审批' },
   { path: '/self-inspection', label: '自查审批' },
   { path: '/experts', label: '应急专家库' },
   { path: '/company-info', label: '企业信息管理' },
   { path: '/shippers', label: '托运企业列表' },
   { path: '/settings', label: '系统设置' },
   { path: '/change-password', label: '修改密码' },
+  { path: '/driver-app/person-vehicle-binding', label: '人车绑定' },
+  { path: '/driver-app/plan-query', label: '计划查询' },
+  { path: '/driver-app/training', label: '培训学习' },
+  { path: '/driver-app/self-check', label: '自检自查' },
 ]
 
 // 顶部导航栏组件
@@ -158,6 +163,9 @@ const Sidebar = () => {
             ],
           },
           {
+            type: 'divider',
+          },
+          {
             key: 'shipperClient',
             label: '托运企业端（前台）',
             children: [
@@ -180,6 +188,9 @@ const Sidebar = () => {
             ],
           },
           {
+            type: 'divider',
+          },
+          {
             key: 'planManagement',
             label: '计划管理',
             children: [
@@ -195,6 +206,16 @@ const Sidebar = () => {
                 key: 'escort-batch',
                 label: <Link to="/escort-batch">押运批次管理</Link>,
               },
+            ],
+          },
+          {
+            key: 'basicManagement',
+            label: '基础管理',
+            children: [
+              {
+                key: 'shippers',
+                label: <Link to="/shippers">托运企业列表</Link>,
+              },
               {
                 key: 'escort-vehicles',
                 label: <Link to="/escort-vehicles">押运车辆维护</Link>,
@@ -203,39 +224,76 @@ const Sidebar = () => {
                 key: 'escort-personnel',
                 label: <Link to="/escort-personnel">押运人员维护</Link>,
               },
+              {
+                key: 'carrier-companies',
+                label: <Link to="/carrier-companies">承运企业管理</Link>,
+              },
+              {
+                key: 'carrier-vehicles',
+                label: <Link to="/carrier-vehicles">承运车辆管理</Link>,
+              },
+              {
+                key: 'carrier-personnel',
+                label: <Link to="/carrier-personnel">承运人员管理</Link>,
+              },
             ],
           },
           {
-        key: 'regulatoryApp',
-        label: '监管 APP',
-        children: [
-          {
-            key: 'self-inspection',
-            label: <Link to="/self-inspection">自查审批</Link>,
-          },
-          {
-            key: 'formation-management',
-            label: <Link to="/formation-management">编队管理</Link>,
-          },
-        ],
-      },
-      {
-        key: 'driverApp',
-        label: '驾押人员APP',
-        children: [
-          {
-            key: 'driver-app-plan-query',
-            label: <Link to="/driver-app/plan-query">计划查询</Link>,
-          },
-        ],
-      },
-          {
-            key: 'shipperManagement',
-            label: '托运企业管理',
+            key: 'trainingManagement',
+            label: '培训管理',
             children: [
               {
-                key: 'shippers',
-                label: <Link to="/shippers">托运企业列表</Link>,
+                key: 'training-materials',
+                label: <Link to="/training-materials">培训资料管理</Link>,
+              },
+              {
+                key: 'training-records',
+                label: <Link to="/training-records">培训记录</Link>,
+              },
+            ],
+          },
+          {
+            type: 'divider',
+          },
+          { key: 'regulatoryApp',
+            label: '监管 APP',
+            children: [
+              {
+                key: 'self-inspection',
+                label: <Link to="/self-inspection">自查审批</Link>,
+              },
+              {
+                key: 'formation-management',
+                label: <Link to="/formation-management">编队管理</Link>,
+              },
+              {
+                key: 'bridge-approval',
+                label: <Link to="/bridge-approval">上桥审批</Link>,
+              },
+            ],
+          },
+          {
+            type: 'divider',
+          },
+          {
+            key: 'driverApp',
+            label: '驾押人员（服务号H5）',
+            children: [
+              {
+                key: 'driver-app-person-vehicle-binding',
+                label: <Link to="/driver-app/person-vehicle-binding">人车绑定</Link>,
+              },
+              {
+                key: 'driver-app-plan-query',
+                label: <Link to="/driver-app/plan-query">计划查询</Link>,
+              },
+              {
+                key: 'driver-app-training',
+                label: <Link to="/driver-app/training">培训学习</Link>,
+              },
+              {
+                key: 'driver-app-self-check',
+                label: <Link to="/driver-app/self-check">自检自查</Link>,
               },
             ],
           },
@@ -249,176 +307,129 @@ const Sidebar = () => {
 const TabHeader = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { tabs, activeKey, addTab, removeTab, setActiveKey, closeOthers, closeAll, refreshTab } = useTabsStore()
+  const { tabs, activeKey, addTab, removeTab, setActiveKey, closeAll, refreshTab } = useTabsStore()
 
   // 监听路由变化，自动添加标签页
   useEffect(() => {
-    const pathname = location.pathname
-    const route = routeConfig.find(r => r.path === pathname)
-
-    if (route) {
-      const exists = tabs.find(t => t.key === pathname)
-      if (!exists) {
-        addTab({
-          key: pathname,
-          label: route.label,
-          path: pathname,
-          closable: pathname !== '/'
-        })
-      }
-      setActiveKey(pathname)
+    const currentPath = location.pathname
+    const currentRoute = routeConfig.find(route => route.path === currentPath)
+    if (currentRoute) {
+      addTab({
+        key: currentPath,
+        label: currentRoute.label,
+        path: currentPath,
+      })
+      setActiveKey(currentPath)
     }
-  }, [location.pathname])
+  }, [location.pathname, addTab, setActiveKey])
 
-  const handleTabChange = (key: string) => {
-    setActiveKey(key)
+  const handleTabClick = (key: string) => {
     navigate(key)
+    setActiveKey(key)
   }
 
-  const handleTabEdit = (targetKey: React.MouseEvent | React.KeyboardEvent | string, action: 'add' | 'remove') => {
-    if (action === 'remove' && typeof targetKey === 'string') {
-      removeTab(targetKey)
-      const remainingTabs = tabs.filter(t => t.key !== targetKey)
-      if (remainingTabs.length > 0 && activeKey === targetKey) {
-        const closedIndex = tabs.findIndex(t => t.key === targetKey)
-        const newTab = remainingTabs[Math.min(closedIndex, remainingTabs.length - 1)]
-        navigate(newTab.path)
+  const handleTabClose = (key: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    removeTab(key)
+    if (key === activeKey && tabs.length > 1) {
+      const firstTab = tabs.find(tab => tab.key !== key)
+      if (firstTab) {
+        navigate(firstTab.key)
+        setActiveKey(firstTab.key)
       }
     }
+  }
+
+  const handleRefresh = (key: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    refreshTab(key)
   }
 
   const tabItems: TabsProps['items'] = tabs.map(tab => ({
     key: tab.key,
     label: (
-      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        {tab.label}
-        {tab.key === activeKey && (
-          <Tooltip title="刷新">
-            <ReloadOutlined
-              style={{ fontSize: 12, marginLeft: 4 }}
-              onClick={(e) => {
-                e.stopPropagation()
-                refreshTab(tab.key)
-              }}
-            />
-          </Tooltip>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span>{tab.label}</span>
+        {tab.key !== '/' && tabs.length > 1 && (
+          <div style={{ display: 'flex', gap: 4 }}>
+            <Tooltip title="刷新">
+              <ReloadOutlined
+                style={{ fontSize: 12, cursor: 'pointer' }}
+                onClick={(e) => handleRefresh(tab.key, e)}
+              />
+            </Tooltip>
+            <Tooltip title="关闭">
+              <CloseCircleOutlined
+                style={{ fontSize: 12, cursor: 'pointer' }}
+                onClick={(e) => handleTabClose(tab.key, e)}
+              />
+            </Tooltip>
+          </div>
         )}
-      </span>
+      </div>
     ),
-    closable: tab.closable !== false,
+    children: <Outlet />,
   }))
-
-  const tabOperationsMenu: MenuProps['items'] = [
-    {
-      key: 'refresh',
-      label: '刷新当前',
-      icon: <ReloadOutlined />,
-      onClick: () => refreshTab(activeKey),
-    },
-    {
-      key: 'close',
-      label: '关闭当前',
-      icon: <CloseOutlined />,
-      onClick: () => handleTabEdit(activeKey, 'remove'),
-      disabled: tabs.find(t => t.key === activeKey)?.closable === false,
-    },
-    {
-      key: 'closeOthers',
-      label: '关闭其他',
-      icon: <CloseCircleOutlined />,
-      onClick: () => {
-        closeOthers(activeKey)
-        const currentTab = tabs.find(t => t.key === activeKey)
-        if (currentTab) {
-          navigate(currentTab.path)
-        }
-      },
-    },
-    {
-      key: 'closeAll',
-      label: '关闭所有',
-      icon: <CloseCircleOutlined />,
-      onClick: () => {
-        closeAll()
-        navigate('/')
-      },
-    },
-  ]
 
   return (
     <div style={{
-      background: '#fff',
       borderBottom: '1px solid #f0f0f0',
-      display: 'flex',
-      alignItems: 'center',
-      padding: '0 16px',
+      background: '#fff',
     }}>
       <Tabs
-        type="editable-card"
         activeKey={activeKey}
-        onChange={handleTabChange}
-        onEdit={handleTabEdit}
         items={tabItems}
-        hideAdd
-        size="small"
-        style={{ flex: 1 }}
-        tabBarStyle={{ margin: 0, borderBottom: 'none' }}
+        onTabClick={handleTabClick}
+        style={{
+          margin: 0,
+          height: 40,
+        }}
+        tabBarStyle={{
+          height: 40,
+          lineHeight: '40px',
+        }}
+        type="card"
+        extra={
+          <Button
+            type="text"
+            icon={<ReloadOutlined />}
+            onClick={closeAll}
+            style={{ marginRight: 16 }}
+          >
+            关闭全部
+          </Button>
+        }
       />
-      <Dropdown menu={{ items: tabOperationsMenu }} placement="bottomRight">
-        <Button
-          type="text"
-          icon={<DownOutlined />}
-          style={{ marginLeft: 8 }}
-        >
-          标签操作
-        </Button>
-      </Dropdown>
     </div>
   )
 }
 
-// 布局组件
-const MainLayout = () => {
-  return (
-    <Layout style={{ minHeight: '100vh' }}>
-      {/* 顶部导航栏 */}
-      <TopHeader />
-
-      <Layout>
-        {/* 左侧边栏 */}
-        <Sidebar />
-
-        {/* 右侧内容区 */}
-        <Layout>
-          {/* 标签页头部 */}
-          <TabHeader />
-
-          {/* 页面内容 */}
-          <div style={{
-            background: '#f0f2f5',
-            minHeight: 'calc(100vh - 112px)',
-            padding: '16px'
-          }}>
-            <Outlet />
-          </div>
-        </Layout>
-      </Layout>
-    </Layout>
-  )
-}
-
-function App() {
+// 主应用组件
+const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route element={<MainLayout />}>
-          {AppRoutes.map(route => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
-        </Route>
-      </Routes>
+      <Layout style={{ minHeight: '100vh' }}>
+        <TopHeader />
+        <Layout>
+          <Sidebar />
+          <Layout style={{ padding: 24, background: '#f5f5f5' }}>
+            <TabHeader />
+            <div style={{ minHeight: 280, marginTop: 16 }}>
+              <Routes>
+                {AppRoutes.map(route => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
+              </Routes>
+            </div>
+          </Layout>
+        </Layout>
+      </Layout>
     </Router>
   )
 }
 
-export default App
+export default App;

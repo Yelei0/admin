@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Card, Table, Button, Modal, Form, Input, Space, Popconfirm, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
+import PRDAnnotation from '../components/PRDAnnotation'
 
 interface DangerousGoods {
   id: string
@@ -173,13 +174,11 @@ const DangerousGoodsPage = () => {
   const handleSave = () => {
     form.validateFields().then(values => {
       if (editingRecord) {
-        // 编辑
         setData(data.map(item =>
           item.id === editingRecord.id ? { ...item, ...values } : item
         ))
         message.success('修改成功')
       } else {
-        // 新增
         const newRecord: DangerousGoods = {
           id: Date.now().toString(),
           ...values,
@@ -198,49 +197,129 @@ const DangerousGoodsPage = () => {
           <h1 style={{ margin: 0 }}>危险货物管理</h1>
           <p style={{ margin: '4px 0 0 0', color: '#666' }}>管理危险货物信息，包括货物基本信息、UN码、CN码、CAS码及应急处置措施</p>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          新增货物
-        </Button>
+        <div style={{ position: 'relative' }}>
+          <PRDAnnotation
+            id={1}
+            title="新增货物"
+            content={
+              <div>
+                <p><strong>操作入口</strong>：点击"新增货物"按钮</p>
+                <p><strong>弹窗内容</strong>：</p>
+                <ul>
+                  <li>货物全称（必填）</li>
+                  <li>简称（必填）</li>
+                  <li>UN码（必填）</li>
+                  <li>CN码（必填）</li>
+                  <li>CAS码（必填）</li>
+                  <li>应急处置措施（必填，多行文本框）</li>
+                </ul>
+                <p><strong>业务规则</strong>：</p>
+                <ul>
+                  <li>所有字段均为必填项</li>
+                  <li>UN码格式为"UN"开头加数字，如UN1075</li>
+                  <li>CN码格式为"CN"开头加数字，如CN21053</li>
+                  <li>CAS码为数字加连字符的格式，如68476-85-7</li>
+                  <li>应急处置措施不能为空</li>
+                  <li>保存成功后显示"新增成功"提示</li>
+                </ul>
+              </div>
+            }
+          />
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+            新增货物
+          </Button>
+        </div>
       </div>
-      <Form
-        form={searchForm}
-        layout="inline"
-        onFinish={handleSearch}
-        style={{ marginBottom: 16, display: 'flex', flexWrap: 'wrap', gap: '12px 24px' }}
-      >
-        <Form.Item label="货物全称" name="fullName">
-          <Input placeholder="请输入货物全称" />
-        </Form.Item>
-        <Form.Item label="简称" name="shortName">
-          <Input placeholder="请输入简称" />
-        </Form.Item>
-        <Form.Item label="UN码" name="unCode">
-          <Input placeholder="请输入UN码" />
-        </Form.Item>
-        <Form.Item label="CN码" name="cnCode">
-          <Input placeholder="请输入CN码" />
-        </Form.Item>
-        <Form.Item label="CAS码" name="casCode">
-          <Input placeholder="请输入CAS码" />
-        </Form.Item>
-        <Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit">
-              搜索
-            </Button>
-            <Button onClick={handleReset}>
-              重置
-            </Button>
-          </Space>
-        </Form.Item>
-      </Form>
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        rowKey="id"
-        pagination={{ pageSize: 10 }}
-        scroll={{ x: 1000, y: 'calc(100vh - 320px)' }}
-      />
+      <div style={{ position: 'relative' }}>
+        <PRDAnnotation
+          id={2}
+          title="搜索筛选"
+          content={
+            <div>
+              <p><strong>操作入口</strong>：在搜索区输入查询条件后点击"搜索"按钮</p>
+              <p><strong>支持字段</strong>：</p>
+              <ul>
+                <li>货物全称（模糊匹配）</li>
+                <li>简称（模糊匹配）</li>
+                <li>UN码（精确匹配）</li>
+                <li>CN码（精确匹配）</li>
+                <li>CAS码（精确匹配）</li>
+              </ul>
+              <p><strong>业务规则</strong>：</p>
+              <ul>
+                <li>支持多条件组合查询</li>
+                <li>查询条件为空时显示全部数据</li>
+                <li>点击"重置"按钮清空所有查询条件</li>
+              </ul>
+            </div>
+          }
+        />
+        <Form
+          form={searchForm}
+          layout="inline"
+          onFinish={handleSearch}
+          style={{ marginBottom: 16, display: 'flex', flexWrap: 'wrap', gap: '12px 24px' }}
+        >
+          <Form.Item label="货物全称" name="fullName">
+            <Input placeholder="请输入货物全称" />
+          </Form.Item>
+          <Form.Item label="简称" name="shortName">
+            <Input placeholder="请输入简称" />
+          </Form.Item>
+          <Form.Item label="UN码" name="unCode">
+            <Input placeholder="请输入UN码" />
+          </Form.Item>
+          <Form.Item label="CN码" name="cnCode">
+            <Input placeholder="请输入CN码" />
+          </Form.Item>
+          <Form.Item label="CAS码" name="casCode">
+            <Input placeholder="请输入CAS码" />
+          </Form.Item>
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                搜索
+              </Button>
+              <Button onClick={handleReset}>
+                重置
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </div>
+      <div style={{ position: 'relative' }}>
+        <PRDAnnotation
+          id={3}
+          title="货物列表"
+          content={
+            <div>
+              <p><strong>表格字段</strong>：</p>
+              <ul>
+                <li>货物全称：危化品的完整名称，如液化石油气</li>
+                <li>简称：货物的常用简称，如液化气</li>
+                <li>UN码：联合国危险货物编号，如UN1075</li>
+                <li>CN码：中国危险货物编号，如CN21053</li>
+                <li>CAS码：化学文摘社编号，如68476-85-7</li>
+                <li>应急处置措施：发生事故时的应急处理方法</li>
+                <li>操作：编辑、删除按钮</li>
+              </ul>
+              <p><strong>显示样式</strong>：</p>
+              <ul>
+                <li>每页显示10条数据</li>
+                <li>支持分页浏览</li>
+                <li>表格横向滚动</li>
+              </ul>
+            </div>
+          }
+        />
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="id"
+          pagination={{ pageSize: 10 }}
+          scroll={{ x: 1000, y: 'calc(100vh - 320px)' }}
+        />
+      </div>
 
       <Modal
         title={editingRecord ? '编辑危险货物' : '新增危险货物'}

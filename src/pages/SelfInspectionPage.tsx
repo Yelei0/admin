@@ -53,7 +53,7 @@ const initialVehicles: VehicleInfo[] = [
     driver: '张师傅',
     escort: '赵押运',
     carrierCompany: '安全运输有限公司',
-    batchNo: 'PL20240101001',
+    batchNo: 'PC20240101001',
     goodsType: '液化石油气',
   },
   {
@@ -63,7 +63,7 @@ const initialVehicles: VehicleInfo[] = [
     driver: '李师傅',
     escort: '钱押运',
     carrierCompany: '危险品运输集团',
-    batchNo: 'PL20240102001',
+    batchNo: 'PC20240102001',
     goodsType: '汽油',
   },
   {
@@ -73,7 +73,7 @@ const initialVehicles: VehicleInfo[] = [
     driver: '王师傅',
     escort: '孙押运',
     carrierCompany: '恒通物流集团',
-    batchNo: 'PL20240103001',
+    batchNo: 'PC20240103001',
     goodsType: '柴油',
   },
 ]

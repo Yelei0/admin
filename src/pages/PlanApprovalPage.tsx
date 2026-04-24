@@ -14,6 +14,7 @@ import {
   Col,
 } from 'antd'
 import { PlusOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 
 // 货物类别及应急措施
 const mockGoodsCategories = [
@@ -102,7 +103,9 @@ interface PlanDetail {
   escortPhone: string
   shipperName: string
   carrierName: string
-  status: 'pending' | 'rejected' | 'waiting_assemble' | 'waiting_training' | 'waiting_self_check' | 'self_check_waiting_confirm' | 'waiting_forming' | 'waiting_bridge_approval' | 'escorting' | 'completed' | 'cancelled'
+  status: 'pending' | 'rejected' | 'waiting_assemble' | 'waiting_training' | 'waiting_self_check' | 'self_check_waiting_confirm' | 'self_check_rejected' | 'waiting_forming' | 'waiting_bridge_approval' | 'escorting' | 'completed' | 'cancelled'
+  rejectReason?: string // 驳回原因
+  selfCheckRejectReason?: string // 自查驳回原因
   createTime?: string
   approvalTime?: string
   assembleArrivalTime?: string
@@ -114,13 +117,23 @@ interface PlanDetail {
   escortStartTime?: string
   completeTime?: string
   cancelTime?: string
+  // 自检自查信息
+  selfCheckInfo?: {
+    vehicleStatus: string
+    driverStatus: string
+    escortStatus: string
+    cargoStatus: string
+    safetyEquipment: string
+    emergencyKit: string
+    otherChecks: string
+  }
 }
 
 // 模拟批次计划数据
 const mockBatchPlans: BatchPlan[] = [
   {
     id: '1',
-    planNo: 'PL20240101001',
+    planNo: 'PC20240101001',
     planDate: '2024-01-15',
     timeRange: '08:00-12:00',
     goodsCategory: '液化石油气',
@@ -134,7 +147,7 @@ const mockBatchPlans: BatchPlan[] = [
   },
   {
     id: '2',
-    planNo: 'PL20240101002',
+    planNo: 'PC20240101002',
     planDate: '2024-01-16',
     timeRange: '14:00-18:00',
     goodsCategory: '硫酸',
@@ -148,7 +161,7 @@ const mockBatchPlans: BatchPlan[] = [
   },
   {
     id: '3',
-    planNo: 'PL20240102001',
+    planNo: 'PC20240102001',
     planDate: '2024-01-20',
     timeRange: '09:00-17:00',
     goodsCategory: '柴油',
@@ -166,9 +179,9 @@ const mockBatchPlans: BatchPlan[] = [
 const initialMockData: PlanDetail[] = [
   {
     id: '1',
-    planDetailNo: 'PD20240101001',
+    planDetailNo: 'MX20240101001',
     batchPlanId: '1',
-    batchPlanNo: 'PL20240101001',
+    batchPlanNo: 'PC20240101001',
     planDate: '2024-01-15',
     timeRange: '08:00-12:00',
     goodsCategory: '液化石油气',
@@ -188,9 +201,9 @@ const initialMockData: PlanDetail[] = [
   },
   {
     id: '2',
-    planDetailNo: 'PD20240101002',
+    planDetailNo: 'MX20240101002',
     batchPlanId: '1',
-    batchPlanNo: 'PL20240101001',
+    batchPlanNo: 'PC20240101001',
     planDate: '2024-01-15',
     timeRange: '08:00-12:00',
     goodsCategory: '液化石油气',
@@ -211,9 +224,9 @@ const initialMockData: PlanDetail[] = [
   },
   {
     id: '3',
-    planDetailNo: 'PD20240101003',
+    planDetailNo: 'MX20240101003',
     batchPlanId: '2',
-    batchPlanNo: 'PL20240101002',
+    batchPlanNo: 'PC20240101002',
     planDate: '2024-01-16',
     timeRange: '14:00-18:00',
     goodsCategory: '硫酸',
@@ -234,9 +247,9 @@ const initialMockData: PlanDetail[] = [
   },
   {
     id: '4',
-    planDetailNo: 'PD20240101004',
+    planDetailNo: 'MX20240101004',
     batchPlanId: '2',
-    batchPlanNo: 'PL20240101002',
+    batchPlanNo: 'PC20240101002',
     planDate: '2024-01-16',
     timeRange: '14:00-18:00',
     goodsCategory: '硫酸',
@@ -258,9 +271,9 @@ const initialMockData: PlanDetail[] = [
   },
   {
     id: '5',
-    planDetailNo: 'PD20240102001',
+    planDetailNo: 'MX20240102001',
     batchPlanId: '3',
-    batchPlanNo: 'PL20240102001',
+    batchPlanNo: 'PC20240102001',
     planDate: '2024-01-20',
     timeRange: '09:00-17:00',
     goodsCategory: '柴油',
@@ -283,9 +296,9 @@ const initialMockData: PlanDetail[] = [
   },
   {
     id: '6',
-    planDetailNo: 'PD20240102002',
+    planDetailNo: 'MX20240102002',
     batchPlanId: '3',
-    batchPlanNo: 'PL20240102001',
+    batchPlanNo: 'PC20240102001',
     planDate: '2024-01-20',
     timeRange: '09:00-17:00',
     goodsCategory: '柴油',
@@ -306,12 +319,21 @@ const initialMockData: PlanDetail[] = [
     assembleArrivalTime: '2024-01-20 08:45:00',
     trainingCompleteTime: '2024-01-20 09:45:00',
     selfCheckCompleteTime: '2024-01-20 10:30:00',
+    selfCheckInfo: {
+      vehicleStatus: '车况良好，轮胎气压正常，制动系统正常',
+      driverStatus: '精神状态良好，证件齐全有效',
+      escortStatus: '精神状态良好，证件齐全有效',
+      cargoStatus: '装载规范，固定牢固，无泄漏',
+      safetyEquipment: '灭火器2个，三角警示牌1个，反光背心2件',
+      emergencyKit: '应急药品齐全，防护用品齐全',
+      otherChecks: '车辆外观整洁，标识清晰'
+    }
   },
   {
     id: '7',
-    planDetailNo: 'PD20240101005',
+    planDetailNo: 'MX20240101005',
     batchPlanId: '1',
-    batchPlanNo: 'PL20240101001',
+    batchPlanNo: 'PC20240101001',
     planDate: '2024-01-15',
     timeRange: '08:00-12:00',
     goodsCategory: '液化石油气',
@@ -333,12 +355,21 @@ const initialMockData: PlanDetail[] = [
     trainingCompleteTime: '2024-01-15 08:30:00',
     selfCheckCompleteTime: '2024-01-15 09:00:00',
     selfCheckConfirmTime: '2024-01-15 09:30:00',
+    selfCheckInfo: {
+      vehicleStatus: '车况良好，轮胎气压正常，制动系统正常',
+      driverStatus: '精神状态良好，证件齐全有效',
+      escortStatus: '精神状态良好，证件齐全有效',
+      cargoStatus: '装载规范，固定牢固，无泄漏',
+      safetyEquipment: '灭火器2个，三角警示牌1个，反光背心2件',
+      emergencyKit: '应急药品齐全，防护用品齐全',
+      otherChecks: '车辆外观整洁，标识清晰'
+    }
   },
   {
     id: '8',
-    planDetailNo: 'PD20240101006',
+    planDetailNo: 'MX20240101006',
     batchPlanId: '1',
-    batchPlanNo: 'PL20240101001',
+    batchPlanNo: 'PC20240101001',
     planDate: '2024-01-15',
     timeRange: '08:00-12:00',
     goodsCategory: '液化石油气',
@@ -364,9 +395,9 @@ const initialMockData: PlanDetail[] = [
   },
   {
     id: '9',
-    planDetailNo: 'PD20240101007',
+    planDetailNo: 'MX20240101007',
     batchPlanId: '2',
-    batchPlanNo: 'PL20240101002',
+    batchPlanNo: 'PC20240101002',
     planDate: '2024-01-16',
     timeRange: '14:00-18:00',
     goodsCategory: '硫酸',
@@ -394,9 +425,9 @@ const initialMockData: PlanDetail[] = [
   },
   {
     id: '10',
-    planDetailNo: 'PD20240102003',
+    planDetailNo: 'MX20240102003',
     batchPlanId: '3',
-    batchPlanNo: 'PL20240102001',
+    batchPlanNo: 'PC20240102001',
     planDate: '2024-01-20',
     timeRange: '09:00-17:00',
     goodsCategory: '柴油',
@@ -425,9 +456,9 @@ const initialMockData: PlanDetail[] = [
   },
   {
     id: '11',
-    planDetailNo: 'PD20240102004',
+    planDetailNo: 'MX20240102004',
     batchPlanId: '3',
-    batchPlanNo: 'PL20240102001',
+    batchPlanNo: 'PC20240102001',
     planDate: '2024-01-20',
     timeRange: '09:00-17:00',
     goodsCategory: '柴油',
@@ -449,11 +480,13 @@ const initialMockData: PlanDetail[] = [
 ]
 
 const PlanApprovalPage = () => {
+  const navigate = useNavigate()
   const [searchForm] = Form.useForm()
+  const [rejectForm] = Form.useForm()
   const [data, setData] = useState<PlanDetail[]>(initialMockData)
   const [searchValues, setSearchValues] = useState<Record<string, string>>({})
-  const [detailModalVisible, setDetailModalVisible] = useState(false)
-  const [currentRecord, setCurrentRecord] = useState<PlanDetail | null>(null)
+  const [rejectModalVisible, setRejectModalVisible] = useState(false)
+  const [currentRejectId, setCurrentRejectId] = useState<string>('')
 
   const columns = [
     {
@@ -545,21 +578,47 @@ const PlanApprovalPage = () => {
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (status: 'pending' | 'rejected' | 'waiting_assemble' | 'waiting_training' | 'waiting_self_check' | 'self_check_waiting_confirm' | 'waiting_forming' | 'waiting_bridge_approval' | 'escorting' | 'completed' | 'cancelled') => {
+      render: (status: 'pending' | 'rejected' | 'waiting_assemble' | 'waiting_training' | 'waiting_self_check' | 'self_check_waiting_confirm' | 'waiting_forming' | 'waiting_bridge_approval' | 'escorting' | 'completed' | 'cancelled', record: PlanDetail) => {
         const statusMap = {
-          pending: { color: 'blue', text: '待审批' },
+          pending: { color: 'orange', text: '待审批' },
           rejected: { color: 'red', text: '已驳回' },
           waiting_assemble: { color: 'orange', text: '待集结' },
-          waiting_training: { color: 'cyan', text: '待培训' },
-          waiting_self_check: { color: 'purple', text: '待自查' },
-          self_check_waiting_confirm: { color: 'geekblue', text: '自查待确认' },
-          waiting_forming: { color: 'lime', text: '待编队' },
-          waiting_bridge_approval: { color: 'gold', text: '待上桥审批' },
-          escorting: { color: 'green', text: '押运中' },
-          completed: { color: 'success', text: '已完成' },
+          waiting_training: { color: 'orange', text: '待培训' },
+          waiting_self_check: { color: 'orange', text: '待自查' },
+          self_check_waiting_confirm: { color: 'orange', text: '自查待确认' },
+          self_check_rejected: { color: 'red', text: '自查已驳回' },
+          waiting_forming: { color: 'orange', text: '待编队' },
+          waiting_bridge_approval: { color: 'orange', text: '待上桥审批' },
+          escorting: { color: 'blue', text: '押运中' },
+          completed: { color: 'green', text: '已完成' },
           cancelled: { color: 'default', text: '已取消' },
         }
-        return <Tag color={statusMap[status].color}>{statusMap[status].text}</Tag>
+        const tag = <Tag color={statusMap[status].color}>{statusMap[status].text}</Tag>
+        if (status === 'rejected' && record.rejectReason) {
+          return (
+            <span 
+              style={{ cursor: 'pointer' }} 
+              onClick={() => {
+                message.info(`驳回原因：${record.rejectReason}`)
+              }}
+            >
+              {tag}
+            </span>
+          )
+        }
+        if (status === 'self_check_rejected' && record.selfCheckRejectReason) {
+          return (
+            <span 
+              style={{ cursor: 'pointer' }} 
+              onClick={() => {
+                message.info(`自查驳回原因：${record.selfCheckRejectReason}`)
+              }}
+            >
+              {tag}
+            </span>
+          )
+        }
+        return tag
       },
     },
     {
@@ -635,9 +694,10 @@ const PlanApprovalPage = () => {
       fixed: 'right' as const,
       align: 'center' as const,
       render: (_: unknown, record: PlanDetail) => (
-        <Space size={12}>
+        <Space size="small">
           <Button
-            type="text"
+            type="link"
+            size="small"
             onClick={() => viewDetail(record)}
           >
             查看
@@ -645,14 +705,16 @@ const PlanApprovalPage = () => {
           {record.status === 'pending' && (
             <>
               <Button
-                type="text"
+                type="link"
+                size="small"
                 danger
                 onClick={() => handleReject(record.id)}
               >
                 驳回
               </Button>
               <Button
-                type="text"
+                type="link"
+                size="small"
                 onClick={() => handleApprove(record.id)}
               >
                 通过
@@ -665,8 +727,7 @@ const PlanApprovalPage = () => {
   ]
 
   const viewDetail = (record: PlanDetail) => {
-    setCurrentRecord(record)
-    setDetailModalVisible(true)
+    navigate('/plan-detail-view', { state: { record } })
   }
 
   const handleApprove = (id: string) => {
@@ -679,11 +740,23 @@ const PlanApprovalPage = () => {
   }
 
   const handleReject = (id: string) => {
+    setCurrentRejectId(id)
+    rejectForm.resetFields()
+    setRejectModalVisible(true)
+  }
+
+  const handleRejectSubmit = (values: { rejectReason: string }) => {
     setData(data.map(item => 
-      item.id === id 
-        ? { ...item, status: 'rejected', approvalTime: new Date().toLocaleString('zh-CN') } 
+      item.id === currentRejectId 
+        ? { 
+            ...item, 
+            status: 'rejected', 
+            approvalTime: new Date().toLocaleString('zh-CN'),
+            rejectReason: values.rejectReason
+          } 
         : item
     ))
+    setRejectModalVisible(false)
     message.success('审批驳回成功')
   }
 
@@ -787,98 +860,44 @@ const PlanApprovalPage = () => {
         }}
       />
 
+
+
       <Modal
-        title="计划明细详情"
-        open={detailModalVisible}
-        onCancel={() => setDetailModalVisible(false)}
+        title="驳回原因"
+        open={rejectModalVisible}
+        onCancel={() => setRejectModalVisible(false)}
         footer={[
-          <Button key="close" onClick={() => setDetailModalVisible(false)}>
-            关闭
+          <Button key="cancel" onClick={() => setRejectModalVisible(false)}>
+            取消
+          </Button>,
+          <Button 
+            key="submit" 
+            type="primary" 
+            htmlType="submit" 
+            form="rejectForm"
+          >
+            确认驳回
           </Button>
         ]}
-        width={800}
+        width={500}
       >
-        {currentRecord && (
-          <div>
-            <Descriptions title="基本信息" bordered style={{ marginBottom: 24 }}>
-              <Descriptions.Item label="计划明细号">{currentRecord.planDetailNo}</Descriptions.Item>
-              <Descriptions.Item label="批次计划编号">{currentRecord.batchPlanNo}</Descriptions.Item>
-              <Descriptions.Item label="计划日期">{currentRecord.planDate}</Descriptions.Item>
-              <Descriptions.Item label="时间段">{currentRecord.timeRange}</Descriptions.Item>
-              <Descriptions.Item label="货物品类">{currentRecord.goodsCategory}</Descriptions.Item>
-              <Descriptions.Item label="托运企业">{currentRecord.shipperName}</Descriptions.Item>
-              <Descriptions.Item label="承运企业">{currentRecord.carrierName}</Descriptions.Item>
-              <Descriptions.Item label="状态">
-                {(() => {
-                  const statusMap = {
-                    pending: { color: 'blue', text: '待审批' },
-                    rejected: { color: 'red', text: '已驳回' },
-                    waiting_assemble: { color: 'orange', text: '待集结' },
-                    waiting_training: { color: 'cyan', text: '待培训' },
-                    waiting_self_check: { color: 'purple', text: '待自查' },
-                    self_check_waiting_confirm: { color: 'geekblue', text: '自查待确认' },
-                    waiting_forming: { color: 'lime', text: '待编队' },
-                    waiting_bridge_approval: { color: 'gold', text: '待上桥审批' },
-                    escorting: { color: 'green', text: '押运中' },
-                    completed: { color: 'success', text: '已完成' },
-                    cancelled: { color: 'default', text: '已取消' },
-                  }
-                  const statusInfo = statusMap[currentRecord.status]
-                  return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>
-                })()}
-              </Descriptions.Item>
-            </Descriptions>
-
-            <Descriptions title="车辆信息" bordered style={{ marginBottom: 24 }}>
-              <Descriptions.Item label="车头">{currentRecord.headVehicle}</Descriptions.Item>
-              <Descriptions.Item label="挂车">{currentRecord.trailer}</Descriptions.Item>
-              <Descriptions.Item label="驾驶员">{currentRecord.driverName} / {currentRecord.driverPhone}</Descriptions.Item>
-              <Descriptions.Item label="押运员">{currentRecord.escortName} / {currentRecord.escortPhone}</Descriptions.Item>
-            </Descriptions>
-
-            <Descriptions title="应急措施" bordered>
-              <Descriptions.Item label="应急措施" span={3}>
-                {currentRecord.emergencyMeasures}
-              </Descriptions.Item>
-            </Descriptions>
-
-            <Descriptions title="时间信息" bordered style={{ marginTop: 24 }}>
-              {currentRecord.createTime && (
-                <Descriptions.Item label="创建时间">{currentRecord.createTime}</Descriptions.Item>
-              )}
-              {currentRecord.approvalTime && (
-                <Descriptions.Item label="审批时间">{currentRecord.approvalTime}</Descriptions.Item>
-              )}
-              {currentRecord.assembleArrivalTime && (
-                <Descriptions.Item label="到达集结点时间">{currentRecord.assembleArrivalTime}</Descriptions.Item>
-              )}
-              {currentRecord.trainingCompleteTime && (
-                <Descriptions.Item label="培训完成时间">{currentRecord.trainingCompleteTime}</Descriptions.Item>
-              )}
-              {currentRecord.selfCheckCompleteTime && (
-                <Descriptions.Item label="自查完成时间">{currentRecord.selfCheckCompleteTime}</Descriptions.Item>
-              )}
-              {currentRecord.selfCheckConfirmTime && (
-                <Descriptions.Item label="自查确认时间">{currentRecord.selfCheckConfirmTime}</Descriptions.Item>
-              )}
-              {currentRecord.formingCompleteTime && (
-                <Descriptions.Item label="编队完成时间">{currentRecord.formingCompleteTime}</Descriptions.Item>
-              )}
-              {currentRecord.bridgeApprovalTime && (
-                <Descriptions.Item label="上桥审批时间">{currentRecord.bridgeApprovalTime}</Descriptions.Item>
-              )}
-              {currentRecord.escortStartTime && (
-                <Descriptions.Item label="押运开始时间">{currentRecord.escortStartTime}</Descriptions.Item>
-              )}
-              {currentRecord.completeTime && (
-                <Descriptions.Item label="完成时间">{currentRecord.completeTime}</Descriptions.Item>
-              )}
-              {currentRecord.cancelTime && (
-                <Descriptions.Item label="取消时间">{currentRecord.cancelTime}</Descriptions.Item>
-              )}
-            </Descriptions>
-          </div>
-        )}
+        <Form
+          id="rejectForm"
+          form={rejectForm}
+          layout="vertical"
+          onFinish={handleRejectSubmit}
+        >
+          <Form.Item 
+            label="驳回原因" 
+            name="rejectReason"
+            rules={[{ required: true, message: '请输入驳回原因' }]}
+          >
+            <Input.TextArea 
+              rows={4} 
+              placeholder="请输入驳回原因"
+            />
+          </Form.Item>
+        </Form>
       </Modal>
     </Card>
   )

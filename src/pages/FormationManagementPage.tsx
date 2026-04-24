@@ -9,7 +9,12 @@ import {
   DatePicker,
   Select,
   Badge,
+  Tag,
+  Modal,
 } from 'antd'
+
+type VehicleStatus = 'pending' | 'numbered'
+type FormationStatus = 'boarding_pending' | 'boarding_approved'
 
 interface VehicleInfo {
   id: string
@@ -22,7 +27,7 @@ interface VehicleInfo {
   shipperCompany: string
   batchNo: string
   goodsType: string
-  status: 'pending' | 'numbered'
+  status: VehicleStatus
 }
 
 interface FormationBatch {
@@ -32,6 +37,7 @@ interface FormationBatch {
   vehicles: VehicleInfo[]
   escorts: string[]
   leadVehicles: string[]
+  status: FormationStatus
 }
 
 const initialVehicles: VehicleInfo[] = [
@@ -44,7 +50,7 @@ const initialVehicles: VehicleInfo[] = [
     escortPhone: '13900139001',
     carrierCompany: '安全运输有限公司',
     shipperCompany: '中石化销售有限公司',
-    batchNo: 'PL20240101001',
+    batchNo: 'PC20240101001',
     goodsType: '液化石油气',
     status: 'pending',
   },
@@ -57,7 +63,7 @@ const initialVehicles: VehicleInfo[] = [
     escortPhone: '13900139002',
     carrierCompany: '危险品运输集团',
     shipperCompany: '中石油运输公司',
-    batchNo: 'PL20240102001',
+    batchNo: 'PC20240102001',
     goodsType: '汽油',
     status: 'pending',
   },
@@ -70,7 +76,7 @@ const initialVehicles: VehicleInfo[] = [
     escortPhone: '13900139003',
     carrierCompany: '恒通物流集团',
     shipperCompany: '恒力石化有限公司',
-    batchNo: 'PL20240103001',
+    batchNo: 'PC20240103001',
     goodsType: '柴油',
     status: 'pending',
   },
@@ -83,7 +89,7 @@ const initialVehicles: VehicleInfo[] = [
     escortPhone: '13900139004',
     carrierCompany: '安全运输有限公司',
     shipperCompany: '中石化销售有限公司',
-    batchNo: 'PL20240101002',
+    batchNo: 'PC20240101002',
     goodsType: '液化石油气',
     status: 'numbered',
   },
@@ -96,7 +102,7 @@ const initialVehicles: VehicleInfo[] = [
     escortPhone: '13900139005',
     carrierCompany: '危险品运输集团',
     shipperCompany: '中石油运输公司',
-    batchNo: 'PL20240102002',
+    batchNo: 'PC20240102002',
     goodsType: '汽油',
     status: 'numbered',
   },
@@ -109,7 +115,7 @@ const initialVehicles: VehicleInfo[] = [
     escortPhone: '13900139006',
     carrierCompany: '恒通物流集团',
     shipperCompany: '恒力石化有限公司',
-    batchNo: 'PL20240103002',
+    batchNo: 'PC20240103002',
     goodsType: '柴油',
     status: 'numbered',
   },
@@ -118,19 +124,21 @@ const initialVehicles: VehicleInfo[] = [
 const initialFormations: FormationBatch[] = [
   {
     id: 'F001',
-    batchNumber: 'BD20240120001',
+    batchNumber: 'YY20240120001',
     formationDate: '2024-01-20',
     vehicles: [initialVehicles[3], initialVehicles[4]],
     escorts: ['E001', 'E002'],
     leadVehicles: ['V004'],
+    status: 'boarding_approved',
   },
   {
     id: 'F002',
-    batchNumber: 'BD20240121001',
+    batchNumber: 'YY20240121001',
     formationDate: '2024-01-21',
     vehicles: [initialVehicles[5]],
     escorts: ['E003'],
     leadVehicles: ['V006'],
+    status: 'boarding_pending',
   },
 ]
 
@@ -164,6 +172,15 @@ const FormationManagementPage = () => {
   const [formations, setFormations] = useState<FormationBatch[]>(initialFormations)
   const [selectedFormation, setSelectedFormation] = useState<FormationBatch | null>(null)
   const [formationDateFilter, setFormationDateFilter] = useState<string | null>(null)
+
+  const getStatusTag = (status: FormationStatus) => {
+    const statusMap = {
+      boarding_pending: { color: 'orange', text: '上桥审批中' },
+      boarding_approved: { color: 'green', text: '上桥审批通过' },
+    }
+    const { color, text } = statusMap[status]
+    return <Tag color={color} style={{ marginRight: 0 }}>{text}</Tag>
+  }
 
   const filteredVehicles = initialVehicles.filter(vehicle => {
     if (vehicle.status !== activeTab) return false
@@ -247,11 +264,12 @@ const FormationManagementPage = () => {
 
     const newFormation: FormationBatch = {
       id: `F${Date.now()}`,
-      batchNumber: `BD${formationDate.replace(/-/g, '')}${String(formations.length + 1).padStart(3, '0')}`,
+      batchNumber: `YY${formationDate.replace(/-/g, '')}${String(formations.length + 1).padStart(3, '0')}`,
       formationDate,
       vehicles: selectedVehicles.map(id => initialVehicles.find(v => v.id === id)!),
       escorts: selectedEscorts,
       leadVehicles: selectedLeadVehicles,
+      status: 'boarding_pending',
     }
 
     setFormations(prev => [...prev, newFormation])
@@ -305,7 +323,7 @@ const FormationManagementPage = () => {
                   },
                   {
                     key: 'numbered',
-                    label: <span style={{ fontSize: 14 }}>已编号 <Badge count={filteredFormations.length} size="small" style={{ marginLeft: 8 }} /></span>,
+                    label: <span style={{ fontSize: 14 }}>已编号 <Badge count={formations.length} size="small" style={{ marginLeft: 8 }} /></span>,
                   },
                 ]}
               />
@@ -455,9 +473,9 @@ const FormationManagementPage = () => {
                         transition: 'all 0.2s ease',
                       }}
                     >
-                      <div style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: 13, color: '#999', marginBottom: 4 }}>批次编号</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                         <div style={{ fontSize: 16, fontWeight: 600, color: '#1a1a1a' }}>{formation.batchNumber}</div>
+                        {getStatusTag(formation.status)}
                       </div>
 
                       <div style={{ height: 1, backgroundColor: '#f0f0f0', margin: '12px 0' }} />
@@ -558,38 +576,21 @@ const FormationManagementPage = () => {
                         }}
                       >
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>{vehicle.plateNumber}</div>
-                          <div style={{ fontSize: 12, color: '#1677ff' }}>{vehicle.carrierCompany}</div>
+                          <div style={{ fontSize: 15 }}>{vehicle.plateNumber}</div>
+                          <div style={{ fontSize: 12, opacity: 0.8 }}>{vehicle.carrierCompany}</div>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{
-                            color: '#fff',
-                            fontSize: 11,
-                            fontWeight: 500,
-                            backgroundColor: vehicle.goodsType === '液化石油气' ? '#ff6b6b' :
-                                           vehicle.goodsType === '汽油' ? '#ffa94d' : '#69db7c',
-                            padding: '4px 10px',
-                            borderRadius: 4,
-                          }}>
-                            {vehicle.goodsType}
-                          </div>
-                          <Button
-                            danger
-                            size="small"
-                            type="text"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleRemoveVehicle(vehicleId)
-                            }}
-                            disabled={selectedVehicles.length === 1}
+                        {selectedVehicles.length > 1 && (
+                          <div
+                            onClick={() => handleRemoveVehicle(vehicleId)}
                             style={{
                               padding: '4px 8px',
                               fontSize: 12,
+                              cursor: 'pointer',
                             }}
                           >
                             删除
-                          </Button>
-                        </div>
+                          </div>
+                        )}
                       </div>
                     ) : null
                   })}
@@ -597,7 +598,7 @@ const FormationManagementPage = () => {
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 14, color: '#333', marginBottom: 8, fontWeight: 500 }}>押运人员（多选）</div>
+                <div style={{ fontSize: 14, color: '#333', marginBottom: 8, fontWeight: 500 }}>押运人员（可多选）</div>
                 <Select
                   mode="multiple"
                   style={{ width: '100%' }}
@@ -605,20 +606,17 @@ const FormationManagementPage = () => {
                   options={escortOptions}
                   value={selectedEscorts}
                   onChange={setSelectedEscorts}
-                  maxTagCount={2}
                 />
               </div>
 
               <div style={{ marginBottom: 24 }}>
-                <div style={{ fontSize: 14, color: '#333', marginBottom: 8, fontWeight: 500 }}>押运车辆（多选）</div>
+                <div style={{ fontSize: 14, color: '#333', marginBottom: 8, fontWeight: 500 }}>押运车辆</div>
                 <Select
-                  mode="multiple"
                   style={{ width: '100%' }}
                   placeholder="请选择押运车辆"
-                  options={vehicleOptions}
+                  options={vehicleOptions.filter(opt => selectedVehicles.includes(opt.value))}
                   value={selectedLeadVehicles}
                   onChange={setSelectedLeadVehicles}
-                  maxTagCount={2}
                 />
               </div>
 
@@ -634,11 +632,11 @@ const FormationManagementPage = () => {
                   boxShadow: '0 4px 12px rgba(22, 119, 255, 0.4)',
                 }}
               >
-                确认编队
+                提交编队
               </Button>
             </div>
           </>
-        ) : (
+        ) : currentPage === 'detail' && selectedFormation ? (
           <>
             <div style={{
               height: 56,
@@ -666,91 +664,80 @@ const FormationManagementPage = () => {
               <div style={{ flex: 1, textAlign: 'center', marginRight: 44 }}>编队详情</div>
             </div>
 
-            {selectedFormation && (
-              <div style={{ padding: 16 }}>
+            <div style={{ padding: 16 }}>
+              <div style={{
+                backgroundColor: '#fff',
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 16,
+              }}>
                 <div style={{ marginBottom: 16 }}>
                   <div style={{ fontSize: 13, color: '#999', marginBottom: 4 }}>批次编号</div>
                   <div style={{ fontSize: 18, fontWeight: 600, color: '#1a1a1a' }}>{selectedFormation.batchNumber}</div>
                 </div>
 
-                <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: 13, color: '#999', marginBottom: 4 }}>编队日期</div>
-                  <div style={{ fontSize: 14, color: '#333' }}>{selectedFormation.formationDate}</div>
-                </div>
+                <div style={{ height: 1, backgroundColor: '#f0f0f0', margin: '12px 0' }} />
 
                 <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: 14, color: '#333', marginBottom: 8, fontWeight: 500 }}>车辆列表 ({selectedFormation.vehicles.length})</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {selectedFormation.vehicles.map(vehicle => (
-                      <div
-                        key={vehicle.id}
-                        style={{
-                          backgroundColor: '#e6f4ff',
-                          color: '#1677ff',
-                          padding: '12px 16px',
-                          borderRadius: 8,
-                          fontSize: 13,
-                          fontWeight: 500,
-                        }}
-                      >
-                        <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>{vehicle.plateNumber}</div>
-                        <div style={{ fontSize: 12, color: '#1677ff' }}>{vehicle.carrierCompany}</div>
-                      </div>
-                    ))}
+                  <div style={{ fontSize: 13, color: '#999', marginBottom: 4 }}>当前状态</div>
+                  <div>{getStatusTag(selectedFormation.status)}</div>
+                </div>
+
+                <div style={{ height: 1, backgroundColor: '#f0f0f0', margin: '12px 0' }} />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div>
+                    <div style={{ fontSize: 13, color: '#999', marginBottom: 4 }}>编队日期</div>
+                    <div style={{ fontSize: 14, color: '#333', fontWeight: 500 }}>{selectedFormation.formationDate}</div>
                   </div>
-                </div>
-
-                <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: 14, color: '#333', marginBottom: 8, fontWeight: 500 }}>押运人员 ({selectedFormation.escorts.length})</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {selectedFormation.escorts.map(escortId => {
-                      const escort = escortOptions.find(e => e.value === escortId)
-                      return escort ? (
-                        <div
-                          key={escortId}
-                          style={{
-                            backgroundColor: '#f6ffed',
-                            color: '#52c41a',
-                            padding: '6px 14px',
-                            borderRadius: 16,
-                            fontSize: 13,
-                            fontWeight: 500,
-                          }}
-                        >
-                          {escort.label}
-                        </div>
-                      ) : null
-                    })}
-                  </div>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: 14, color: '#333', marginBottom: 8, fontWeight: 500 }}>押运车辆 ({selectedFormation.leadVehicles.length})</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {selectedFormation.leadVehicles.map(vehicleId => {
-                      const vehicle = vehicleOptions.find(v => v.value === vehicleId)
-                      return vehicle ? (
-                        <div
-                          key={vehicleId}
-                          style={{
-                            backgroundColor: '#fff7e6',
-                            color: '#fa8c16',
-                            padding: '6px 14px',
-                            borderRadius: 16,
-                            fontSize: 13,
-                            fontWeight: 500,
-                          }}
-                        >
-                          {vehicle.label}
-                        </div>
-                      ) : null
-                    })}
+                  <div>
+                    <div style={{ fontSize: 13, color: '#999', marginBottom: 4 }}>押运人员</div>
+                    <div style={{ fontSize: 14, color: '#333', fontWeight: 500 }}>{selectedFormation.escorts.length} 人</div>
                   </div>
                 </div>
               </div>
-            )}
+
+              <div style={{
+                backgroundColor: '#fff',
+                borderRadius: 8,
+                padding: 16,
+              }}>
+                <div style={{ fontSize: 14, color: '#333', fontWeight: 500, marginBottom: 12 }}>
+                  车辆列表 ({selectedFormation.vehicles.length})
+                </div>
+
+                {selectedFormation.vehicles.map(vehicle => (
+                  <div
+                    key={vehicle.id}
+                    style={{
+                      backgroundColor: '#f5f5f5',
+                      borderRadius: 8,
+                      padding: 12,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a' }}>{vehicle.plateNumber}</div>
+                      <div style={{
+                        fontSize: 11,
+                        color: '#fff',
+                        backgroundColor: '#1677ff',
+                        padding: '2px 8px',
+                        borderRadius: 4,
+                      }}>
+                        {vehicle.goodsType}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 13, color: '#666', marginBottom: 4 }}>挂车: {vehicle.trailer}</div>
+                    <div style={{ fontSize: 13, color: '#666', marginBottom: 4 }}>驾驶员: {vehicle.driver}</div>
+                    <div style={{ fontSize: 13, color: '#666', marginBottom: 4 }}>押运员: {vehicle.escort}</div>
+                    <div style={{ fontSize: 13, color: '#666' }}>承运企业: {vehicle.carrierCompany}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </>
-        )}
+        ) : null}
       </div>
     </Card>
   )
