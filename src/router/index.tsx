@@ -8,6 +8,7 @@ import PlanDetailPage from '../pages/PlanDetailPage';
 import HomePage from '../pages/HomePage';
 import DangerousGoodsPage from '../pages/DangerousGoodsPage';
 import CarrierPlanDetailPage from '../pages/CarrierPlanDetailPage';
+import PlaceholderPage from '../pages/PlaceholderPage';
 
 export interface RouteConfig {
   path: string;
@@ -43,6 +44,33 @@ const routes: RouteConfig[] = [
   // 计划明细管理
   { path: '/plan-details', element: <PlanDetailPage /> },
 
+  // 托运企业计划明细管理
+  { path: '/shipper-plan-details', element: <PlanDetailPage /> },
+
+  // 计划审批
+  { path: '/plan-approval', element: <PlaceholderPage title="计划审批" description="计划审批功能正在开发中..." /> },
+
+  // 计划批次计划管理
+  { path: '/plan-batch-plans', element: <GenericListPage configPath="/batch-plan.config.json" /> },
+
+  // 押运批次管理
+  { path: '/escort-batch', element: <PlaceholderPage title="押运批次管理" description="押运批次管理功能正在开发中..." /> },
+
+  // 押运车辆维护
+  { path: '/escort-vehicles', element: <PlaceholderPage title="押运车辆维护" description="押运车辆维护功能正在开发中..." /> },
+
+  // 押运人员维护
+  { path: '/escort-personnel', element: <PlaceholderPage title="押运人员维护" description="押运人员维护功能正在开发中..." /> },
+
+  // 编队管理
+  { path: '/formation-management', element: <PlaceholderPage title="编队管理" description="编队管理功能正在开发中..." /> },
+
+  // 上桥审批
+  { path: '/bridge-approval', element: <PlaceholderPage title="上桥审批" description="上桥审批功能正在开发中..." /> },
+
+  // 自查审批
+  { path: '/self-inspection', element: <PlaceholderPage title="自查审批" description="自查审批功能正在开发中..." /> },
+
   // 应急专家库
   {
     path: '/experts',
@@ -54,6 +82,21 @@ const routes: RouteConfig[] = [
 
   // 个人中心 - 修改密码
   { path: '/change-password', element: <ChangePasswordPage /> },
+
+  // 承运企业管理
+  { path: '/carrier-companies', element: <PlaceholderPage title="承运企业管理" description="承运企业管理功能正在开发中..." /> },
+
+  // 承运车辆管理
+  { path: '/carrier-vehicles', element: <PlaceholderPage title="承运车辆管理" description="承运车辆管理功能正在开发中..." /> },
+
+  // 承运人员管理
+  { path: '/carrier-personnel', element: <PlaceholderPage title="承运人员管理" description="承运人员管理功能正在开发中..." /> },
+
+  // 培训资料管理
+  { path: '/training-materials', element: <PlaceholderPage title="培训资料管理" description="培训资料管理功能正在开发中..." /> },
+
+  // 培训记录
+  { path: '/training-records', element: <PlaceholderPage title="培训记录" description="培训记录功能正在开发中..." /> },
 
   // 订单列表页
   {
@@ -72,6 +115,18 @@ const routes: RouteConfig[] = [
   },
   // 设置页面
   { path: '/settings', element: <SettingsPage /> },
+
+  // 驾押人员 - 人车绑定
+  { path: '/driver-app/person-vehicle-binding', element: <PlaceholderPage title="人车绑定" description="人车绑定功能正在开发中..." /> },
+
+  // 驾押人员 - 计划查询
+  { path: '/driver-app/plan-query', element: <PlaceholderPage title="计划查询" description="计划查询功能正在开发中..." /> },
+
+  // 驾押人员 - 培训学习
+  { path: '/driver-app/training', element: <PlaceholderPage title="培训学习" description="培训学习功能正在开发中..." /> },
+
+  // 驾押人员 - 自检自查
+  { path: '/driver-app/self-check', element: <PlaceholderPage title="自检自查" description="自检自查功能正在开发中..." /> },
 ];
 
 export default routes;
