@@ -9,6 +9,9 @@ import HomePage from '../pages/HomePage';
 import DangerousGoodsPage from '../pages/DangerousGoodsPage';
 import CarrierPlanDetailPage from '../pages/CarrierPlanDetailPage';
 import PlaceholderPage from '../pages/PlaceholderPage';
+import FormationManagementPage from '../pages/FormationManagementPage';
+import SelfInspectionPage from '../pages/SelfInspectionPage';
+import BridgeApprovalPage from '../pages/BridgeApprovalPage';
 
 export interface RouteConfig {
   path: string;
@@ -63,13 +66,13 @@ const routes: RouteConfig[] = [
   { path: '/escort-personnel', element: <PlaceholderPage title="押运人员维护" description="押运人员维护功能正在开发中..." /> },
 
   // 编队管理
-  { path: '/formation-management', element: <PlaceholderPage title="编队管理" description="编队管理功能正在开发中..." /> },
+  { path: '/formation-management', element: <FormationManagementPage /> },
 
   // 上桥审批
-  { path: '/bridge-approval', element: <PlaceholderPage title="上桥审批" description="上桥审批功能正在开发中..." /> },
+  { path: '/bridge-approval', element: <BridgeApprovalPage /> },
 
   // 自查审批
-  { path: '/self-inspection', element: <PlaceholderPage title="自查审批" description="自查审批功能正在开发中..." /> },
+  { path: '/self-inspection', element: <SelfInspectionPage /> },
 
   // 应急专家库
   {
